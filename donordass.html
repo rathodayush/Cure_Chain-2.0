@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CureChain · Donor Dashboard (Simple)</title>
+  <style>
+    :root{ --primary:#8bd7f0; --ink:#1f2937; --border:#e5e7eb; --soft:#f7fcff; --radius:14px; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif;color:var(--ink);background:#fff}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+
+    .banner{background:var(--primary); color:#064255; padding:12px 16px; border-radius:14px;}
+    .banner h1{margin:0;font-size:22px}
+    .sub{font-size:13px; opacity:.9}
+
+    /* Stats */
+    .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+    .box{background:var(--soft);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .box .t{font-size:12px;opacity:.8}
+    .box .v{font-weight:700;font-size:18px;margin-top:4px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .tab{border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer}
+    .tab.active{background:var(--primary);border-color:var(--primary)}
+
+    /* Cards */
+    .card{border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;background:#fff}
+    .row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .meta{font-size:13px;opacity:.85}
+
+    /* Buttons */
+    .btn{border:1px solid var(--primary);background:#fff;color:#064255;padding:8px 12px;border-radius:10px;cursor:pointer;margin:4px;}
+    .btn.primary{background:var(--primary);color:#064255}
+
+    /* Form */
+    .form{border:1px solid var(--border);border-radius:14px;padding:16px;background:#fff;margin-bottom:12px}
+    .input{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px}
+
+    /* Popup */
+    #popup{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px); align-items:center; justify-content:center;}
+    #popupBox{background:#fff;padding:18px;border-radius:14px;width:90%;max-width:380px;border:1px solid var(--border);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="banner">
+      <h1>CureChain · Donor Dashboard</h1>
+      <div class="sub">Donate medicine · Track status</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="strip">
+      <div class="box"><div class="t">Total Donations</div><div class="v" id="sTotal">0</div></div>
+      <div class="box"><div class="t">Pending</div><div class="v" id="sPen">0</div></div>
+      <div class="box"><div class="t">Approved</div><div class="v" id="sApp">0</div></div>
+      <div class="box"><div class="t">Completed</div><div class="v" id="sCom">0</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="donate">Donate Medicine</button>
+      <button class="tab" data-tab="mydonations">My Donations</button>
+      <button class="tab" data-tab="profile">Profile</button>
+    </div>
+
+    <!-- Content -->
+    <div id="view"></div>
+  </div>
+
+  <!-- Popup -->
+  <div id="popup">
+    <div id="popupBox">
+      <h3 style="margin:0 0 10px;color:#064255;font-size:18px;">Donation Details</h3>
+      <div id="popupContent" style="font-size:14px;line-height:1.5;color:#1f2937"></div>
+      <button onclick="closePopup()" class="btn primary" style="margin-top:14px;width:100%">Close</button>
+    </div>
+  </div>
+
+<script>
+  // SIMPLE DONOR DASHBOARD STATE
+  const state = {
+    active:'donate',
+    donations:[
+      {id:'D-201', med:'Paracetamol 500mg', qty:10, exp:'2026-01-10', status:'Pending', ngo:'HealthAid NGO'},
+      {id:'D-202', med:'ORS Pack', qty:20, exp:'2025-08-11', status:'Approved', ngo:'SmileTrust NGO'},
+      {id:'D-203', med:'Vitamin B Complex', qty:5, exp:'2026-03-12', status:'Completed', ngo:'HopeCare NGO'},
+      {id:'D-204', med:'Vitamin d Complex', qty:5, exp:'2026-03-13', status:'Completed', ngo:'ayush NGO'},
+    ],
+    profile:{name:'Rahul Verma', phone:'98XXXXXX12', address:'Rohini Sector-12'}
+  };
+
+  const $ = s=>document.querySelector(s);
+  const $$ = s=>[...document.querySelectorAll(s)];
+
+  function updateCounts(){
+    $('#sTotal').textContent = state.donations.length;
+    $('#sPen').textContent = state.donations.filter(x=>x.status==='Pending').length;
+    $('#sApp').textContent = state.donations.filter(x=>x.status==='Approved').length;
+    $('#sCom').textContent = state.donations.filter(x=>x.status==='Completed').length;
+  }
+
+  function render(){
+    updateCounts();
+    $$('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.active));
+    if(state.active==='donate') renderDonateForm();
+    else if(state.active==='mydonations') renderMyDonations();
+    else renderProfile();
+  }
+
+  function renderDonateForm(){
+    $('#view').innerHTML = `
+      <div class='form'>
+        <h2 style='margin:0 0 10px;color:#064255'>Donate Medicine</h2>
+        <input class='input' id='med' placeholder='Medicine Name'>
+        <input class='input' id='qty' type='number' placeholder='Quantity'>
+        <input class='input' id='exp' type='date'>
+        <button class='btn primary' onclick='addDonation()'>Submit Donation</button>
+      </div>
+    `;
+  }
+
+  function addDonation(){
+    const med = $('#med').value.trim();
+    const qty = $('#qty').value;
+    const exp = $('#exp').value;
+    if(!med || !qty || !exp) return alert('Please fill all fields');
+    state.donations.unshift({id:'D-'+Date.now(), med, qty, exp, status:'Pending', ngo:'Assigning...'});
+    state.active='mydonations'; render();
+  }
+
+  function renderMyDonations(){
+    const v = $('#view');
+    if(state.donations.length===0){ v.innerHTML = `<div class='card'>No donations yet.</div>`; return; }
+
+    v.innerHTML = state.donations.map(d=>`
+      <div class='card'>
+        <div class='row'>
+          <div>
+            <strong>${d.med}</strong> · <span class='meta'>× ${d.qty}</span><br>
+            <span class='meta'>Expiry: ${d.exp}</span><br>
+            <span class='meta'>Status: ${d.status}</span><br>
+            <span class='meta'>NGO: ${d.ngo}</span>
+          </div>
+          <span class='meta'>#${d.id}</span>
+        </div>
+        <button class='btn' onclick='showDetails("${d.id}")'>View Details</button>
+        ${d.status==='Pending'?`<button class='btn danger' onclick='cancelDonation("${d.id}")'>Cancel</button>`:''}
+      </div>
+    `).join('');
+  }
+
+  function showDetails(id){
+    const d = state.donations.find(x=>x.id===id);
+    if(!d) return;
+    $('#popupContent').innerHTML = `
+      <strong>Medicine:</strong> ${d.med}<br>
+      <strong>Quantity:</strong> ${d.qty}<br>
+      <strong>Expiry:</strong> ${d.exp}<br>
+      <strong>Status:</strong> ${d.status}<br>
+      <strong>NGO Assigned:</strong> ${d.ngo}<br>
+      <strong>Donation ID:</strong> ${d.id}<br>
+    `;
+    $('#popup').style.display='flex';
+  }
+
+  function closePopup(){ $('#popup').style.display='none'; }
+
+  function cancelDonation(id){
+    state.donations = state.donations.filter(x=>x.id!==id);
+    render();
+  }
+
+  function renderProfile(){
+    const p = state.profile;
+    $('#view').innerHTML = `
+      <div class='card'>
+        <h3 style='margin:0 0 8px;color:#064255'>My Profile</h3>
+        <div class='meta'>Name: ${p.name}</div>
+        <div class='meta'>Phone: ${p.phone}</div>
+        <div class='meta'>Address: ${p.address}</div>
+      </div>
+    `;
+  }
+
+  // Tab change
+  $$('.tab').forEach(b=> b.onclick=()=>{ state.active=b.dataset.tab; render(); });
+
+  render();
+</script>
+</body>
+</html>

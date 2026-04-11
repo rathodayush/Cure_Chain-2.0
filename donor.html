@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CureChain Login / Register</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Your Original form.css Styling (Not Modified) -->
+  <style>
+    body {
+      background: #f5f5f5;
+    }
+
+    .tab-btn {
+      border: none;
+      background: #eaeaea;
+      padding: 8px 25px;
+      border-radius: 20px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .active-tab {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 480px;
+      margin: auto;
+    }
+
+    .btn {
+      background-color: #8bd7f0;
+      border: none;
+      color: black;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .form-control:focus {
+      border-color: #8bd7f0;
+      box-shadow: none;
+    }
+
+    .btn:hover {
+      background-color: #8bd7f0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container py-4 text-center" style="margin-top: 3rem;">
+    <h2 class="mb-3">Welcome to <span style="color: #00BFFF; font-weight: 600;">CureChain </span></h2>
+    <p>Medicine Donation & Request Portal</p>
+
+
+    <!-- LOGIN FIRST (Default Page) -->
+    <div id="loginSection" class="form-box">
+      <h4 class="mb-3">Login</h4>
+      <input class="form-control mb-3" type="email" placeholder="Email">
+      <input class="form-control mb-3" type="password" placeholder="Password">
+
+      <button class="btn w-50">Login</button>
+
+      <p class="mt-3 text-primary" id="forgotPassBtn" style="cursor:pointer;">Forgot Password?</p>
+
+      <!-- FORGOT PASSWORD SECTION -->
+      <div id="forgotBox" style="display:none; margin-top:1rem; text-align:left;">
+        <h6>Reset Your Password</h6>
+        <input class="form-control mb-2" type="email" placeholder="your email">
+        <input class="form-control mb-2" type="password" placeholder="New Password">
+        <input class="form-control mb-2" type="password" placeholder="Confirm New Password">
+        <button class="btn w-50 mt-1">Update Password</button>
+      </div>
+
+
+      <p class="mt-3">Don't have an account? <span id="openRegister" class="text-primary"
+          style="cursor:pointer;">Register</span></p>
+    </div>
+
+
+    <!-- REGISTER SECTION (Opens When Clicked) -->
+    <div id="registerSection" class="form-box" style="display:none; margin-top:2rem;">
+
+      <!-- Upper Switch Buttons -->
+      <div class="d-flex justify-content-center gap-2 mb-3">
+        <button id="regDonorBtn" class="tab-btn active-tab">Register Donor</button>
+        <!-- <button id="regNgoBtn" class="tab-btn">Register NGO</button> -->
+      </div>
+
+      <!-- DONOR REGISTER FORM -->
+      <div id="donorForm">
+        <h5 class="mb-4 mt-4">Register As a Donner</h5>
+        <p>Create an account to start donating medicines safaily</p>
+        <input class="form-control mt-2 mb-2" placeholder="Donor Name">
+        <input class="form-control mt-2 mb-2" type="email" placeholder="Email">
+
+        <div class="row g-3 mt-2">
+          <div class="col-6"><input class="form-control" type="password" placeholder="Password"></div>
+          <div class="col-6"><input class="form-control" type="password" placeholder="Confirm Password"></div>
+        </div>
+
+        <input class="form-control mt-2 g-3" placeholder="Phone">
+        <input class="form-control mt-2 g-3" placeholder="Address">
+        <input class="form-control mt-2 g-3" placeholder="Age">
+
+
+        <!-- STEP 1 : Upload Document -->
+        <div id="step1" class="step active mt-3">
+          <h6>Upload Your Document</h6>
+          <input type="file" id="docFile" class="form-control" style="margin-bottom: 0.7rem;">
+          <button class="btn mt-2" onclick="checkDocument()" style="font-size: 13px; ">Verify & Next</button>
+          <p id="msg" class="text-danger mt-2"></p>
+        </div>
+
+        <!-- STEP 2 : Actual Form -->
+        <div id="step2" class="step">
+          <h6>Continue Your Form</h6>
+          <input type="text" class="form-control mb-2" placeholder="Your Name">
+          <input type="email" class="form-control mb-2" placeholder="Email">
+          <button class="btn btn-success">Submit</button>
+        </div>
+
+        <!-- <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+        <button class="btn btn-primary">rasiter</button>
+        
+      </div> -->
+        <div class="container mt-3">
+          <div class="p-3 rounded" style="background:#e8f4ff; border-left:4px solid #007bff; font-size: 13px;">
+            <p class="mb-0 text-center">Please ensure the donated medicines are in good condition and not expired.</p>
+          </div>
+        </div>
+
+        <button class="btn w-50 mt-3">Register Donor</button>
+        <p class="mt-3">Already registered? <span id="openLogin" class="text-primary"
+            style="cursor:pointer;">Login</span></p>
+      </div>
+
+
+      <!-- NGO REGISTER FORM -->
+      <!-- <div id="ngoForm" style="display:none;">
+           <h5 class="mb-4 mt-4">Register Your NGO</h5>
+      <p>Create an account to start requesting medicines safaily</p>
+
+
+            <div class="row g-3">
+                <div class="col-6"><input class="form-control" placeholder="NGO Name"></div>
+                <div class="col-6"><input class="form-control" placeholder="Registration Number"></div>
+            </div>
+
+            <input class="form-control mt-3" type="email" placeholder="Email">
+
+            <div class="row g-2 mt-2">
+                <div class="col-6"><input class="form-control" type="password" placeholder="Password"></div>
+                <div class="col-6"><input class="form-control" type="password" placeholder="Confirm Password"></div>
+            </div>
+
+            <div class="row g-2 mt-2">
+                <div class="col-6"><input class="form-control" placeholder="Contact Person"></div>
+                <div class="col-6"><input class="form-control" placeholder="Phone"></div>
+            </div>
+
+            <input class="form-control mt-3" placeholder="Address">
+            <textarea class="form-control mt-3" placeholder="NGO Description"></textarea>
+
+            STEP 1 : Upload Document -->
+      <!-- <div id="step1" class="step active mt-3">
+        <h6>Upload Your Document</h6>
+        <input type="file" id="docFile" class="form-control" style="margin-bottom: 0.7rem;">
+        <button class="btn mt-2" onclick="checkDocument()" style="font-size: 13px; ">Verify & Next</button>
+        <p id="msg" class="text-danger mt-2"></p>
+      </div>
+
+      <STEP 2 : Actual Form -->
+      <!-- <div id="step2" class="step">
+        <h6>Continue Your Form</h6>
+        <input type="text" class="form-control mb-2" placeholder="Your Name">
+        <input type="email" class="form-control mb-2" placeholder="Email">
+        <button class="btn btn-success">Submit</button>
+      </div> -->
+
+      <!-- <button class="btn w-50 mt-3">Register NGO</button>
+      <a href="donor.html">
+        <button class="btn w-50 mt-3">join as Donor</button>
+      </a> -->
+
+      <!-- <div class="container mt-3">
+        <div class="p-3 rounded" style="background:#e8f4ff; border-left:4px solid #007bff; font-size: 13px;">
+          <p class="mb-0 text-center">Please ensure the before request medicines your NGO are varifed.</p>
+        </div>
+      </div>
+
+            <button class="btn w-50 mt-3">Register NGO</button>
+            <p class="mt-3">Already registered? <span id="backToLogin2" class="text-primary" style="cursor:pointer;">Login</span></p>
+        
+        </div> -->
+    </div>
+  </div>
+
+  <script>
+    // SHOW REGISTER SECTION
+    const openRegister = document.getElementById("openRegister");
+    const openLogin = document.getElementById("openLogin"); // NEW
+    const loginSection = document.getElementById("loginSection");
+    const registerSection = document.getElementById("registerSection");
+
+    // SHOW REGISTER
+    if (openRegister) {
+      openRegister.onclick = () => {
+        loginSection.style.display = "none";
+        registerSection.style.display = "block";
+      };
+    }
+
+    // SHOW LOGIN (FIXED)
+    if (openLogin) {
+      openLogin.onclick = () => {
+        registerSection.style.display = "none";
+        loginSection.style.display = "block";
+      };
+    }
+
+    // REGISTER TAB SWITCHING
+    const donorForm = document.getElementById("donorForm");
+    const ngoForm = document.getElementById("ngoForm");
+    const regDonorBtn = document.getElementById("regDonorBtn");
+    const regNgoBtn = document.getElementById("regNgoBtn");
+
+    regDonorBtn.onclick = () => {
+      donorForm.style.display = "block";
+      ngoForm.style.display = "none";
+      regDonorBtn.classList.add("active-tab");
+      regNgoBtn.classList.remove("active-tab");
+    };
+
+    regNgoBtn.onclick = () => {
+      donorForm.style.display = "none";
+      ngoForm.style.display = "block";
+      regNgoBtn.classList.add("active-tab");
+      regDonorBtn.classList.remove("active-tab");
+    };
+
+    // BACK TO LOGIN FROM DONOR
+    const backToLogin1 = document.getElementById("backToLogin1");
+    if (backToLogin1) {
+      backToLogin1.onclick = () => {
+        registerSection.style.display = "none";
+        loginSection.style.display = "block";
+      };
+    }
+
+    // TOGGLE FORGOT PASSWORD BOX
+    const forgotBtn = document.getElementById("forgotPassBtn");
+    const forgotBox = document.getElementById("forgotBox");
+    if (forgotBtn) {
+      forgotBtn.onclick = () => {
+        forgotBox.style.display = (forgotBox.style.display === "none") ? "block" : "none";
+      };
+    }
+</script>
+
+
+</body>
+
+</html>
+
+<!-- 26/11/25 -->

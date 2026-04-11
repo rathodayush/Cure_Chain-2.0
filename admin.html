@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CureChain · Admin Dashboard</title>
+  <style>
+    :root{ --primary:#8bd7f0; --ink:#1f2937; --border:#e5e7eb; --soft:#f7fcff; --radius:14px; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto;color:var(--ink)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+
+    /* Header */
+    .banner{background:var(--primary);padding:12px 18px;border-radius:16px;color:#064255;margin-bottom:16px}
+    .banner h1{margin:0;font-size:24px}
+
+    /* Stats */
+    .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+    .box{background:var(--soft);padding:14px;border:1px solid var(--border);border-radius:14px}
+    .t{font-size:12px;opacity:.7}.v{font-weight:700;font-size:22px;margin-top:4px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .tab{padding:8px 18px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;font-size:14px}
+    .tab.active{background:var(--primary);border-color:var(--primary);color:#064255}
+
+    /* Cards & Table */
+    .card{border:1px solid var(--border);padding:14px;border-radius:14px;background:#fff;margin-bottom:12px}
+    .row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .meta{font-size:13px;opacity:.8}
+
+    .btn{border:1px solid var(--primary);padding:8px 12px;border-radius:10px;background:#fff;color:#064255;cursor:pointer;margin:4px}
+    .btn.primary{background:var(--primary)}
+
+    .table{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+    .thead,.trow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
+    .thead{background:#f7fcff;font-size:13px;padding:10px;border-bottom:1px solid var(--border)}
+    .trow{padding:10px;border-bottom:1px solid var(--border)}
+    .trow:last-child{border-bottom:none}
+
+    /* Popup */
+    #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);align-items:center;justify-content:center}
+    #box{background:#fff;padding:18px;border-radius:16px;width:90%;max-width:380px;border:1px solid var(--border)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="banner">
+    <h1>Admin Dashboard</h1>
+    <div>Manage NGOs · Donors · Donations · Stock</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="strip">
+    <div class="box"><div class="t">NGOs Pending</div><div class="v" id="st1">0</div></div>
+    <div class="box"><div class="t">NGOs Active</div><div class="v" id="st2">0</div></div>
+    <div class="box"><div class="t">Pending Donations</div><div class="v" id="st3">0</div></div>
+    <div class="box"><div class="t">Completed Donations</div><div class="v" id="st4">0</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="ngos">NGO Management</button>
+    <button class="tab" data-tab="donors">Donor Management</button>
+    <button class="tab" data-tab="donations">All Donations</button>
+    <button class="tab" data-tab="stock">Stock</button>
+  </div>
+
+  <div id="view"></div>
+</div>
+
+<!-- Popup -->
+<div id="popup">
+  <div id="box">
+    <h3 style="margin:0 0 10px;color:#064255">Details</h3>
+    <div id="popupContent" style="font-size:14px;line-height:1.5"></div>
+    <button class="btn primary" style="width:100%;margin-top:10px" onclick="closePop()">Close</button>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+
+const state={active:'ngos',
+  ngos:[{id:'NG01',name:'HealthAid',city:'Delhi',status:'Pending'},{id:'NG02',name:'SmileTrust',city:'Mumbai',status:'Active'}],
+  donors:[{name:'Rahul',phone:'98xx',status:'Active'},{name:'Neha',phone:'99xx',status:'Active'}],
+  donations:[{id:'D1',med:'Paracetamol',qty:10,status:'Pending',donor:'Rahul',ngo:'HealthAid'},{id:'D2',med:'ORS',qty:5,status:'Completed',donor:'Neha',ngo:'SmileTrust'}],
+  stock:{'HealthAid':{'Paracetamol':{total:50,batches:[{exp:'2026-01-01',qty:50}]}},'SmileTrust':{'ORS':{total:10,batches:[{exp:'2025-08-01',qty:10}]}}}
+};
+
+function stats(){
+  $('#st1').textContent = state.ngos.filter(n=>n.status==='Pending').length;
+  $('#st2').textContent = state.ngos.filter(n=>n.status==='Active').length;
+  $('#st3').textContent = state.donations.filter(d=>d.status==='Pending').length;
+  $('#st4').textContent = state.donations.filter(d=>d.status==='Completed').length;
+}
+
+function render(){
+  stats();
+  $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===state.active));
+  if(state.active==='ngos') showNGO();
+  if(state.active==='donors') showDonors();
+  if(state.active==='donations') showDonations();
+  if(state.active==='stock') showStock();
+}
+
+function showNGO(){
+  $('#view').innerHTML = state.ngos.map(n=>`
+    <div class='card'>
+      <strong>${n.name}</strong> · <span class='meta'>${n.city}</span><br>
+      Status: ${n.status}<br>
+      <button class='btn' onclick="viewNGO('${n.id}')">View</button>
+      ${n.status==='Pending'?`<button class='btn primary' onclick="approveNGO('${n.id}')">Approve</button>`:''}
+    </div>`).join('');
+}
+
+function approveNGO(id){ const n=state.ngos.find(x=>x.id===id); if(n) n.status='Active'; render(); }
+function viewNGO(id){ const n=state.ngos.find(x=>x.id===id); pop(`<strong>Name:</strong> ${n.name}<br><strong>City:</strong> ${n.city}<br><strong>Status:</strong> ${n.status}`); }
+
+function showDonors(){
+  $('#view').innerHTML = state.donors.map(d=>`
+    <div class='card'>
+      <strong>${d.name}</strong><br>Phone: ${d.phone}<br>Status: ${d.status}
+    </div>`).join('');
+}
+
+function showDonations(){
+  $('#view').innerHTML = state.donations.map(d=>`
+    <div class='card'>
+      <strong>${d.med}</strong> × ${d.qty}<br>Status: ${d.status}<br>Donor: ${d.donor} · NGO: ${d.ngo}
+    </div>`).join('');
+}
+
+function showStock(){
+  let out="";
+  Object.entries(state.stock).forEach(([ngo,items])=>{
+    out+=`<div class='card'><strong>${ngo}</strong></div>`;
+    out+=`<div class='table'><div class='thead'><div>Medicine</div><div>Total</div><div>Batch</div><div>Qty</div></div>`;
+    Object.entries(items).forEach(([med,data])=>{
+      data.batches.forEach(b=>{
+        out+=`<div class='trow'><div>${med}</div><div>${data.total}</div><div>${b.exp}</div><div>${b.qty}</div></div>`;
+      });
+    });
+    out+=`</div>`;
+  });
+  $('#view').innerHTML = out;
+}
+
+function pop(html){ $('#popupContent').innerHTML=html; $('#popup').style.display='flex'; }
+function closePop(){ $('#popup').style.display='none'; }
+
+$$('.tab').forEach(t=>t.onclick=()=>{state.active=t.dataset.tab;render()});
+render();
+</script>
+</body>
+</html>

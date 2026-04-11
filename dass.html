@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CureChain · NGO Dashboard (Simple)</title>
+
+  <!-- SAME CSS (unchanged) -->
+  <style>
+    :root {
+      --primary: #8bd7f0;
+      --ink: #1f2937;
+      --border: #e5e7eb;
+      --soft: #f7fcff;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box }
+
+    body {
+      margin: 0;
+      font-family: system-ui, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff
+    }
+
+    .wrap { max-width: 980px; margin: 0 auto; padding: 16px }
+
+    .banner {
+      background: var(--primary);
+      color: #064255;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+
+    .banner h1 { margin: 0; font-size: 20px }
+
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0
+    }
+
+    .box {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px
+    }
+
+    .box .t { font-size: 12px; opacity: .8 }
+    .box .v { font-weight: 700; font-size: 18px; margin-top: 4px }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0 12px
+    }
+
+    .tab {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 14px;
+      cursor: pointer
+    }
+
+    .tab.active {
+      background: var(--primary);
+      border-color: var(--primary)
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #fff
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .meta { font-size: 13px; opacity: .85 }
+
+    .btn {
+      margin: 4px;
+      border: 1px solid var(--primary);
+      background: #fff;
+      color: #05516a;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #064255
+    }
+
+    .table {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden
+    }
+
+    .thead, .trow {
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr;
+      gap: 8px
+    }
+
+    .thead {
+      background: #f9fdff;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .trow {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .trow:last-child { border-bottom: none }
+
+    @media (max-width:720px) {
+      .strip { grid-template-columns: repeat(2, 1fr) }
+      .thead, .trow { grid-template-columns: 1.5fr .7fr 1.3fr }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="banner" style="background-color: #e5e7eb;">
+      <h1><span style="color: #00BFFF; font-weight: 600;">CureChain </span> · ngo Dashboard</h1>
+      <p>Medicine Donation & Request Portal</p>
+    </div>
+
+    <!-- Static counts -->
+    <div class="strip">
+      <div class="box"><div class="t">New Requests</div><div class="v">3</div></div>
+      <div class="box"><div class="t">Approved</div><div class="v">0</div></div>
+      <div class="box"><div class="t">Completed</div><div class="v">0</div></div>
+      <div class="box"><div class="t">Stock Items</div><div class="v">2</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="requests">New Donation Requests</button>
+      <button class="tab" data-tab="approved">Approved</button>
+      <button class="tab" data-tab="completed">Completed</button>
+      <button class="tab" data-tab="stock">Available Stock</button>
+    </div>
+
+    <div id="view"></div>
+  </div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+
+  function renderRequests() {
+    $('#view').innerHTML = `
+      <div class="card">
+        <div class="row">
+          <div>
+            <div><strong>Paracetamol 500mg</strong> · <span class="meta">× 12</span></div>
+            <div class="meta">Expiry: 2026-01-15</div>
+            <div class="meta">Donor: Rahul Verma · Rohini Sec-12</div>
+          </div>
+          <div class="meta">#D-101</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:-6px; border-top:0; border-top-left-radius:0; border-top-right-radius:0">
+        <button class="btn primary" onclick="console.log('approve backend')">Approve</button>
+        <button class="btn" onclick="console.log('reject backend')">Reject</button>
+      </div>
+    `;
+  }
+
+  function renderApproved() {
+    $('#view').innerHTML = `<div class="card">No approved donations.</div>`;
+  }
+
+  function renderCompleted() {
+    $('#view').innerHTML = `<div class="card">No completed donations.</div>`;
+  }
+
+  function renderStock() {
+    $('#view').innerHTML = `
+      <div class="table">
+        <div class="thead">
+          <div>Medicine</div><div>Total</div><div>Batches</div>
+        </div>
+        <div class="trow">
+          <div><strong>Paracetamol 500mg</strong></div>
+          <div>50</div>
+          <div>2026-01-01 · 50</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Tabs
+  $$('.tab').forEach(tab => {
+    tab.onclick = () => {
+      $$('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      if (tab.dataset.tab === 'requests') renderRequests();
+      else if (tab.dataset.tab === 'approved') renderApproved();
+      else if (tab.dataset.tab === 'completed') renderCompleted();
+      else renderStock();
+    };
+  });
+
+  // default load
+  renderRequests();
+</script>
+
+</body>
+</html>
