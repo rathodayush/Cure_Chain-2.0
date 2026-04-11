@@ -36,16 +36,23 @@ app.get("/", (req, res) => {
     // res.send("ok goodg");
 });
 
+const mysql = require("mysql2");
+
 const connection = mysql.createConnection({
-
-    host: "localhost",
-    user: "root",
-    database: "curechain",
-    password: "ayush123@"
-
-
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
 });
 
+connection.connect((err) => {
+  if (err) {
+    console.log("DB Error:", err);
+  } else {
+    console.log("Connected to Railway DB 🚀");
+  }
+});
 
 
 // connection.end();
@@ -287,6 +294,11 @@ app.get('/easydonation', (req,res) => {
 });
 
 // console.log(req.session);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Server running");
+});
 
 app.listen(port, () => {
 
