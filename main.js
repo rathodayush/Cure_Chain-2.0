@@ -20,6 +20,7 @@ app.use(express.static('public'));
 //session system
 
 const session = require('express-session');
+const { render } = require("ejs");
 
 app.use(session({
     secret: 'curechain_secret',
@@ -257,6 +258,54 @@ app.post('/login', (req, res) => {
 
                     // ❌ dono me nahi mila
                     res.send("Invalid Email or Password ❌");
+                }
+            );
+        }
+    );
+});
+
+app.get("/update-password", (req,res) => {
+    res.render('updatepassword');
+});
+
+app.post("/update-password", (req, res) => {
+    const { reset_email, npassword, cpassword } = req.body;
+
+    if (npassword !== cpassword) {
+        return res.send("Passwords do not match ❌");
+    }
+
+    // 🔹 donor update
+    connection.query(
+        "UPDATE donors SET password=? WHERE email=?",
+        [npassword, reset_email],
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+                return res.send("DB Error");
+            }
+
+            if (result.affectedRows > 0) {
+                return res.send("Password updated successfully ✅");
+            }
+
+            // 🔹 NGO update
+            connection.query(
+                "UPDATE ngos SET password=? WHERE email=?",
+                [npassword, reset_email],
+                (err, result) => {
+
+                    if (err) {
+                        console.log(err);
+                        return res.send("DB Error");
+                    }
+
+                    if (result.affectedRows > 0) {
+                        return res.send("Password updated successfully ✅");
+                    }
+
+                    res.send("Email not found ❌");
                 }
             );
         }
