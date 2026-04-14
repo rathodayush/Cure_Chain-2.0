@@ -253,7 +253,7 @@ app.post('/login', (req, res) => {
                         req.session.user = ngoResult[0];
                         req.session.type = 'ngo';
 
-                        return res.redirect('/ngodass');
+                        return res.redirect('/ngodassboard');
                     }
 
                     // ❌ dono me nahi mila
@@ -313,8 +313,54 @@ app.post("/update-password", (req, res) => {
 });
 
 
+// app.get('/donordass', (req, res) => {
+//     res.render('donordassboard');
+
+// });
+
 app.get('/donordass', (req, res) => {
-    res.render('donordassboard');
+
+    if (!req.session.user) {
+        return res.redirect('/usersLogin');
+    }
+
+    res.render('donordassboard', {
+        user: req.session.user
+    });
+
+});
+
+// ngo ke liye
+
+app.get("/ngodassboard", (req, res) => {
+
+  if(!req.session.user){
+    return res.redirect("/userlogin");
+  }
+
+  const user = req.session.user;
+
+  // 🔴 yaha DB se data laana hai
+  const counts = {
+    new: 0,
+    approved: 0,
+    completed: 0,
+    stock: 0
+  };
+
+  const requests = [];
+  const approved = [];
+  const completed = [];
+  const stock = [];
+
+  res.render("ngodassboard", {
+    user,
+    counts,
+    requests,
+    approved,
+    completed,
+    stock
+  });
 
 });
 
@@ -337,6 +383,11 @@ app.get('/easydonation', (req,res) => {
 
 // console.log(req.session);
 
+app.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/usersLogin');
+    });
+});
 
 
 app.listen(port, () => {

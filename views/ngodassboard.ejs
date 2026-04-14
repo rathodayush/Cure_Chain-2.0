@@ -267,50 +267,31 @@ function showTab(tabId, btn){
 }
 </script>
 
-<!-- 🔴 STRIP (backend hata diya) -->
-<div class="strip">
-  <div class="box"><div class="t">New Requests</div><div class="v"></div></div>
-  <div class="box"><div class="t">Approved</div><div class="v"></div></div>
-  <div class="box"><div class="t">Completed</div><div class="v"></div></div>
-  <div class="box"><div class="t">Stock Items</div><div class="v"></div></div>
-</div>
 
-<!-- 🔴 TABS SAME -->
-<div class="tabs">
-  <button class="tab active" data-tab="requests">New Donation Requests</button>
-  <button class="tab" data-tab="approved">Approved</button>
-  <button class="tab" data-tab="completed">Completed</button>
-  <button class="tab" data-tab="stock">Available Stock</button>
-  
-</div>
-
-<div id="view"></div>
-
-</div>
 
 <script>
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
-function renderRequests() {
-  $('#view').innerHTML = `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div><strong><!-- med name --></strong> · <span class="meta">× <!-- qty --></span></div>
-          <div class="meta">Expiry: <!-- expiry --></div>
-          <div class="meta">Donor: <!-- donor name --></div>
-        </div>
-        <div class="meta">#ID</div>
-      </div>
-    </div>
+// function renderRequests() {
+//   $('#view').innerHTML = `
+//     <div class="card">
+//       <div class="row">
+//         <div>
+//           <div><strong><!-- med name --></strong> · <span class="meta">× <!-- qty --></span></div>
+//           <div class="meta">Expiry: <!-- expiry --></div>
+//           <div class="meta">Donor: <!-- donor name --></div>
+//         </div>
+//         <div class="meta">#ID</div>
+//       </div>
+//     </div>
 
-    <div class="card" style="margin-top:-6px; border-top:0; border-top-left-radius:0; border-top-right-radius:0">
-      <button class="btn primary">Approve</button>
-      <button class="btn">Reject</button>
-    </div>
-  `;
-}
+//     <div class="card" style="margin-top:-6px; border-top:0; border-top-left-radius:0; border-top-right-radius:0">
+//       <button class="btn primary">Approve</button>
+//       <button class="btn">Reject</button>
+//     </div>
+//   `;
+// }
 
 function renderApproved() {
   $('#view').innerHTML = `<div class="card">No data</div>`;
@@ -320,36 +301,36 @@ function renderCompleted() {
   $('#view').innerHTML = `<div class="card">No data</div>`;
 }
 
-function renderStock() {
-  $('#view').innerHTML = `
-    <div class="table">
-      <div class="thead">
-        <div>Medicine</div><div>Total</div><div>Batches</div>
-      </div>
-      <div class="trow">
-        <div><strong><!-- med --></strong></div>
-        <div><!-- total --></div>
-        <div><!-- batch --></div>
-      </div>
-    </div>
-  `;
-}
+// function renderStock() {
+//   $('#view').innerHTML = `
+//     <div class="table">
+//       <div class="thead">
+//         <div>Medicine</div><div>Total</div><div>Batches</div>
+//       </div>
+//       <div class="trow">
+//         <div><strong><!-- med --></strong></div>
+//         <div><!-- total --></div>
+//         <div><!-- batch --></div>
+//       </div>
+//     </div>
+//   `;
+// }
 
-/* tabs */
-$$('.tab').forEach(tab => {
-  tab.onclick = () => {
-    $$('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+// /* tabs */
+// $$('.tab').forEach(tab => {
+//   tab.onclick = () => {
+//     $$('.tab').forEach(t => t.classList.remove('active'));
+//     tab.classList.add('active');
 
-    if (tab.dataset.tab === 'requests') renderRequests();
-    else if (tab.dataset.tab === 'approved') renderApproved();
-    else if (tab.dataset.tab === 'completed') renderCompleted();
-    else renderStock();
-  };
-});
+//     if (tab.dataset.tab === 'requests') renderRequests();
+//     else if (tab.dataset.tab === 'approved') renderApproved();
+//     else if (tab.dataset.tab === 'completed') renderCompleted();
+//     else renderStock();
+//   };
+// });
 
-/* default */
-renderRequests();
+// /* default */
+// renderRequests();
 </script>
 
 </body>
