@@ -28,7 +28,7 @@
           <a class="navbar-brand" href="#">
             <img src="./assest/CureChain__2_-removebg-preview.png" style="height: 3rem;" alt="" class="logocc">
           </a>
-          <a href="mainlogin.html">
+          <a href="usersLogin">
             <img src="./assest/logout.png" style="height: 1.6rem; margin-left: 7rem;" alt="" class="only-mo-icon">
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -342,10 +342,10 @@
       <!-- Feedback -->
       <div class="footer-section">
         <h3>Feedback</h3>
-        <form class="feedback-form">
-          <input type="text" placeholder="Your Name" required style="border-radius: 1.3rem;">
-          <input type="email" placeholder="Your Email" required style="border-radius: 1.3rem;">
-          <textarea placeholder="Your Feedback..." required style="border-radius: 1.3rem;"></textarea>
+        <form class="feedback-form" method="POST" action="/">
+          <input type="text" name="name" placeholder="Your Name" required style="border-radius: 1.3rem;">
+          <input type="email" name="email" placeholder="Your Email" required style="border-radius: 1.3rem;">
+          <textarea name="message" placeholder="Your Feedback..." required style="border-radius: 1.3rem;"></textarea>
           <button type="submit" style="border-radius: 1.3rem;">Submit</button>
         </form>
       </div>

@@ -16,6 +16,7 @@ app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
 
 //session system
 
@@ -27,7 +28,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 5 * 60 * 1000   // ⏰ 5 minutes
+        maxAge: 1 * 60 * 1000   // ⏰ 5 minutes
     }
 }));
 
@@ -386,6 +387,21 @@ app.get('/easydonation', (req,res) => {
 app.post('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/usersLogin');
+    });
+});
+
+app.post("/", (req, res) => {
+    const { name, email, message } = req.body;
+
+    const sql = "INSERT INTO feedbacks (name, email, message) VALUES (?, ?, ?)";
+
+    connection.query(sql, [name, email, message], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.send("Error saving feedback");
+        }
+
+        res.redirect('/')
     });
 });
 
