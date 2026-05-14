@@ -270,45 +270,96 @@ app.get("/update-password", (req,res) => {
 });
 
 app.post("/update-password", (req, res) => {
-    const { reset_email, npassword, cpassword } = req.body;
 
+    const { old_pass, reset_email, npassword, cpassword } = req.body;
+
+    // confirm password check
     if (npassword !== cpassword) {
         return res.send("Passwords do not match ❌");
     }
 
-    // 🔹 donor update
+    // 🔹 donor check
     connection.query(
-        "UPDATE donors SET password=? WHERE email=?",
-        [npassword, reset_email],
-        (err, result) => {
+        "SELECT * FROM donors WHERE email=?",
+        [reset_email],
+        (err, donorResult) => {
 
             if (err) {
                 console.log(err);
                 return res.send("DB Error");
             }
 
-            if (result.affectedRows > 0) {
-                return res.send("Password updated successfully ✅");
-            }
+            // donor found
+            if (donorResult.length > 0) {
 
-            // 🔹 NGO update
-            connection.query(
-                "UPDATE ngos SET password=? WHERE email=?",
-                [npassword, reset_email],
-                (err, result) => {
+                const donor = donorResult[0];
 
-                    if (err) {
-                        console.log(err);
-                        return res.send("DB Error");
-                    }
+                // old password verify
+                if (donor.password !== old_pass) {
+                    return res.send("Old password incorrect ❌");
+                }
 
-                    if (result.affectedRows > 0) {
+                // update donor password
+                connection.query(
+                    "UPDATE donors SET password=? WHERE email=?",
+                    [npassword, reset_email],
+                    (err, result) => {
+
+                        if (err) {
+                            console.log(err);
+                            return res.send("DB Error");
+                        }
+
                         return res.send("Password updated successfully ✅");
                     }
+                );
 
-                    res.send("Email not found ❌");
-                }
-            );
+            } else {
+
+                // 🔹 NGO check
+                connection.query(
+                    "SELECT * FROM ngos WHERE email=?",
+                    [reset_email],
+                    (err, ngoResult) => {
+
+                        if (err) {
+                            console.log(err);
+                            return res.send("DB Error");
+                        }
+
+                        // NGO found
+                        if (ngoResult.length > 0) {
+
+                            const ngo = ngoResult[0];
+
+                            // old password verify
+                            if (ngo.password !== old_pass) {
+                                return res.send("Old password incorrect ❌");
+                            }
+
+                            // update NGO password
+                            connection.query(
+                                "UPDATE ngos SET password=? WHERE email=?",
+                                [npassword, reset_email],
+                                (err, result) => {
+
+                                    if (err) {
+                                        console.log(err);
+                                        return res.send("DB Error");
+                                    }
+
+                                    return res.send("Password updated successfully ✅");
+                                }
+                            );
+
+                        } else {
+
+                            return res.send("Email not found ❌");
+
+                        }
+                    }
+                );
+            }
         }
     );
 });
