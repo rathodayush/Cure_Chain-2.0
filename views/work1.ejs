@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Donation - CureChain</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy Donation - CureChain</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,262 +20,243 @@
   <link rel="icon" href="./assest/Screenshot_2025-10-10_151103-removebg-preview (1).png">
 
 
-<style>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #f3faff;
-        margin: 0;
-        padding: 0;
-        line-height: 1.8;
+      font-family: Arial, sans-serif;
+      background: #f3faff;
+      margin: 0;
+      padding: 0;
+      line-height: 1.8;
     }
+
     .container {
-        width: 90%;
-        max-width: 900px;
-        margin: auto;
-        padding: 40px 0;
+      width: 90%;
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 0;
     }
-    h1, h2, h3 {
-        color: #00BFFF;
-        font-weight: bold;
+
+    h1,
+    h2,
+    h3 {
+      color: #00BFFF;
+      font-weight: bold;
     }
+
     p {
-        font-size: 1.05rem;
-        color: #222;
+      font-size: 1.05rem;
+      color: #222;
     }
+
     .section {
-        background: white;
-        padding: 25px;
-        margin: 25px 0;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: white;
+      padding: 25px;
+      margin: 25px 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .lang-btn {
-        margin:20px 10px;
-        padding:10px 20px;
-        background:#00BFFF;
-        color:white;
-        border:none;
-        border-radius:8px;
-        font-size:1rem;
-        cursor:pointer;
-        position: absolute;
-        left: 50%;
+      margin: 20px 10px;
+      padding: 10px 20px;
+      background: #00BFFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      position: absolute;
+      left: 50%;
     }
 
     footer {
-    width: 100%;
-    /* position: fixed;   hamesha niche rahega */
-    bottom: 0;
-    left: 0;
-}
+      width: 100%;
+      /* position: fixed;   hamesha niche rahega */
+      bottom: 0;
+      left: 0;
+    }
 
-.footer-bottom {
-    background-color: #00BFFF;
-    color: black;
-    text-align: center;
-    padding: 5px 0;   /* height kam kar di */
-    font-size: 12px;  /* text chhota */
-}
-</style>
+    .footer-bottom {
+      background-color: #00BFFF;
+      color: black;
+      text-align: center;
+      padding: 5px 0;
+      /* height kam kar di */
+      font-size: 12px;
+      /* text chhota */
+    }
+  </style>
 </head>
 
 
 <body>
-    
 
-   <!-- <b><div onclick="window.location.href='index.html'" style="cursor:pointer; padding-left: 5%; padding-top: 3%; size: 10px; display: inline; font-size: 20px; font-weight: 900;" >←</div></b>
+
+  <!-- <b><div onclick="window.location.href='index.html'" style="cursor:pointer; padding-left: 5%; padding-top: 3%; size: 10px; display: inline; font-size: 20px; font-weight: 900;" >←</div></b>
     -->
-<!-- LANGUAGE BUTTONS -->
+  <!-- LANGUAGE BUTTONS -->
 
-<header class="head">
-    <div>
-      <nav class="navbar navbar-expand-lg bg-body-light" id="navbar">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">
-            <img src="./assest/CureChain__2_-removebg-preview.png" style="height: 3rem;" alt="" class="logocc">
-          </a>
-          <a href="usersLogin">
-            <img src="./assest/logout.png" style="height: 1.6rem; margin-left: 7rem;" alt="" class="only-mo-icon">
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <!-- <span class="navbar-toggler-icon"></span> -->
-            <i class="fa-solid fa-bars toggle-icon"></i>
-          </button>
-          <!-- navbar link -->
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto ms-lg-auto d-flex flex-collom">
-              <li class="nav-item">
-                <a class="nav-link " href="#"><i class="fa-solid fa-heart"
-                    style="padding-left: 0.rem; font-size: 1rem;"></i> Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="usersLogin"><i class="fa-solid fa-circle-plus"
-                    style="padding-right: 1rem; font-size: 1rem;"></i>Donate medicine</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="usersLogin"><i class="fa-solid fa-magnifying-glass"
-                    style="padding-right: 1rem; font-size: 1rem;"></i>Request medicine</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="usersLogin"><i class="fa-solid fa-bars"
-                    style="padding-right: 1rem; font-size: 1rem;"></i>Dashboard</a>
-              </li>
-              <li class="nav-item">
+  <!--  -->
 
-                <a class="nav-link" href="admin.ejs"><i class="fa-solid fa-user-shield"
-                    style="padding-right: 1.3rem; font-size: 1rem;"></i>Admin</a>
-              </li>
-
-
-              <li> <a href="usersLogin"><button class="btn btn-primary">join as a</button></a></li>
-
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </header>
- 
-<button onclick="showEnglish()" class="lang-btn" style="position: absolute;
+  <button onclick="showEnglish()" class="lang-btn" style="position: absolute;
         left: 80%;">English</button>
 
-<button onclick="showHindi()" class="lang-btn" style="position: absolute;
+  <button onclick="showHindi()" class="lang-btn" style="position: absolute;
         left: 90%;">Hindi</button>
 
 
-<main style="margin-top: 4.6rem; font-size: 14px !important; ">
-<!-- ===================== ENGLISH CONTENT ===================== -->
-<div id="english">
-<div class="container">
+  <main style="margin-top: 4.6rem; font-size: 14px !important; ">
+    <!-- ===================== ENGLISH CONTENT ===================== -->
+    <div id="english">
+      <div class="container">
 
-<h1>Easy Donation</h1>
-<p>CureChain makes donating unused medicines simple, secure, and impactful. Every year, millions of medicines go unused and expire inside homes while countless people struggle to afford the same medicines. CureChain bridges this gap by helping donors contribute their extra medicines to individuals who need them the most.</p>
+        <h1>Easy Donation</h1>
+        <p>CureChain makes donating unused medicines simple, secure, and impactful. Every year, millions of medicines go
+          unused and expire inside homes while countless people struggle to afford the same medicines. CureChain bridges
+          this gap by helping donors contribute their extra medicines to individuals who need them the most.</p>
 
-<div class="section">
-<h2>Why Medicine Donation Matters</h2>
-<p>Medicines are expensive and essential for saving lives. Many families cannot afford the required treatment due to high medical costs. At the same time, a large number of households have leftover medicines from completed treatments or changed prescriptions.</p>
-<p>Instead of letting these medicines expire and become waste, donating them ensures that someone in need gets timely help.</p>
-</div>
+        <div class="section">
+          <h2>Why Medicine Donation Matters</h2>
+          <p>Medicines are expensive and essential for saving lives. Many families cannot afford the required treatment
+            due to high medical costs. At the same time, a large number of households have leftover medicines from
+            completed treatments or changed prescriptions.</p>
+          <p>Instead of letting these medicines expire and become waste, donating them ensures that someone in need gets
+            timely help.</p>
+        </div>
 
-<div class="section">
-<h2>How CureChain Helps You Donate</h2>
-<p>CureChain provides a user-friendly donation system. Donors simply enter the medicine details such as name, dosage, expiry, and quantity. CureChain verifies the information and makes it available for patients or NGOs who need those medicines.</p>
-<p>The process is transparent, safe, and ensures only valid, unexpired, and securely packed medicines are accepted.</p>
-</div>
+        <div class="section">
+          <h2>How CureChain Helps You Donate</h2>
+          <p>CureChain provides a user-friendly donation system. Donors simply enter the medicine details such as name,
+            dosage, expiry, and quantity. CureChain verifies the information and makes it available for patients or NGOs
+            who need those medicines.</p>
+          <p>The process is transparent, safe, and ensures only valid, unexpired, and securely packed medicines are
+            accepted.</p>
+        </div>
 
-<div class="section">
-<h2>Why Donate Through CureChain?</h2>
-<ul>
-    <li><strong>Reduce Waste:</strong> Prevent safe medicines from being wasted.</li>
-    <li><strong>Help People in Need:</strong> Your unused medicines can save someone’s life.</li>
-    <li><strong>Secure & Verified:</strong> Every donation is cross-checked.</li>
-    <li><strong>Real Impact:</strong> Each strip can bring relief to someone.</li>
-</ul>
-</div>
+        <div class="section">
+          <h2>Why Donate Through CureChain?</h2>
+          <ul>
+            <li><strong>Reduce Waste:</strong> Prevent safe medicines from being wasted.</li>
+            <li><strong>Help People in Need:</strong> Your unused medicines can save someone’s life.</li>
+            <li><strong>Secure & Verified:</strong> Every donation is cross-checked.</li>
+            <li><strong>Real Impact:</strong> Each strip can bring relief to someone.</li>
+          </ul>
+        </div>
 
-<div class="section">
-<h2>How CureChain Ensures Safety</h2>
-<p>All donated medicines go through strict verification. Expired, opened, or unsafe medicines are rejected immediately. Only properly sealed and safe medicines are forwarded to NGOs for distribution.</p>
-</div>
+        <div class="section">
+          <h2>How CureChain Ensures Safety</h2>
+          <p>All donated medicines go through strict verification. Expired, opened, or unsafe medicines are rejected
+            immediately. Only properly sealed and safe medicines are forwarded to NGOs for distribution.</p>
+        </div>
 
-<div class="section">
-<h2>The Bigger Impact</h2>
-<p>When you donate unused medicines, you contribute to reducing waste, improving access to healthcare, and supporting those who cannot afford treatment. CureChain creates a chain reaction of kindness through your small efforts.</p>
-</div>
+        <div class="section">
+          <h2>The Bigger Impact</h2>
+          <p>When you donate unused medicines, you contribute to reducing waste, improving access to healthcare, and
+            supporting those who cannot afford treatment. CureChain creates a chain reaction of kindness through your
+            small efforts.</p>
+        </div>
 
-<div class="section">
-<h2>Role of Donors and NGOs</h2>
-<p><strong>Donors (common people)</strong> list unused but safe medicines on CureChain. These are medicines bought from medical stores but left unused after treatment.</p>
-<p><strong>NGOs</strong> then collect these medicines from donors, verify them, and deliver them to patients who genuinely need them.</p>
-<p>This two-way system creates a transparent and reliable distribution model.</p>
-</div>
+        <div class="section">
+          <h2>Role of Donors and NGOs</h2>
+          <p><strong>Donors (common people)</strong> list unused but safe medicines on CureChain. These are medicines
+            bought from medical stores but left unused after treatment.</p>
+          <p><strong>NGOs</strong> then collect these medicines from donors, verify them, and deliver them to patients
+            who genuinely need them.</p>
+          <p>This two-way system creates a transparent and reliable distribution model.</p>
+        </div>
 
-<div class="section">
-<h2>Donate Instead of Wasting</h2>
-<p>Many people buy medicines, use a few tablets, and the remaining strips stay untouched. These often expire and are thrown away.</p>
-<p>CureChain encourages you to donate those unused but safe medicines. NGOs collect them, check them, and deliver them to the right patients who cannot afford treatment.</p>
-<p>A simple act of donating can save a life.</p>
-</div>
+        <div class="section">
+          <h2>Donate Instead of Wasting</h2>
+          <p>Many people buy medicines, use a few tablets, and the remaining strips stay untouched. These often expire
+            and are thrown away.</p>
+          <p>CureChain encourages you to donate those unused but safe medicines. NGOs collect them, check them, and
+            deliver them to the right patients who cannot afford treatment.</p>
+          <p>A simple act of donating can save a life.</p>
+        </div>
 
-</div>
-</div>
-
-
-
-<!-- ===================== HINDI CONTENT ===================== -->
-<div id="hindi" style="display:none;">
-<div class="container">
-
-<h1 style="color:#00BFFF;font-weight:bold;">आसान दवा दान</h1>
-<p>CureChain दवाओं के दान की प्रक्रिया को सरल, सुरक्षित और प्रभावी बनाता है। हर साल लाखों दवाएँ घरों में बिना उपयोग के पड़ी-पड़ी एक्सपायर हो जाती हैं, जबकि दूसरी ओर कई लोग वही दवाएँ खरीदने में सक्षम नहीं होते। CureChain इस अंतर को खत्म करता है ताकि आपकी बची हुई सुरक्षित दवाएँ ज़रूरतमंद तक पहुँच सकें।</p>
-
-<div class="section">
-<h2>दवा दान क्यों महत्वपूर्ण है?</h2>
-<p>दवाएँ महंगी होती हैं और हर किसी की पहुँच में नहीं होतीं। कई बार इलाज पूरा होने के बाद दवाएँ घर में बच जाती हैं। ये अक्सर समय के साथ खराब होकर फेंक दी जाती हैं।</p>
-<p>अगर इन्हें दान किया जाए तो ये किसी के लिए जीवनरक्षक साबित हो सकती हैं।</p>
-</div>
-
-<div class="section">
-<h2>CureChain आपको कैसे मदद करता है?</h2>
-<p>CureChain दान प्रक्रिया को बेहद आसान बनाता है। आपको केवल दवा का नाम, एक्सपायरी, मात्रा जैसी जानकारी डालनी होती है।</p>
-<p>इसके बाद CureChain और NGOs उसकी जाँच कर उसे उन लोगों तक पहुँचाते हैं जिन्हें उस दवा की जरूरत है।</p>
-</div>
-
-<div class="section">
-<h2>आपको CureChain के माध्यम से ही दान क्यों करना चाहिए?</h2>
-<ul>
-    <li><strong>दवा की बर्बादी रोकें</strong></li>
-    <li><strong>किसी की जान बचाएँ</strong></li>
-    <li><strong>सुरक्षित और विश्वसनीय प्रक्रिया</strong></li>
-    <li><strong>आपका छोटा दान बड़ा प्रभाव डाल सकता है</strong></li>
-</ul>
-</div>
-
-<div class="section">
-<h2>CureChain सुरक्षा कैसे सुनिश्चित करता है?</h2>
-<p>हर दवा की एक्सपायरी, पैकिंग और सुरक्षा जाँची जाती है। एक्सपायर या खुली हुई दवाएँ कभी स्वीकार नहीं की जातीं।</p>
-</div>
-
-<div class="section">
-<h2>डोनर और NGO की भूमिका</h2>
-<p>आम लोग अपनी घर में बची हुई सुरक्षित दवाएँ दान के लिए सूचीबद्ध करते हैं।</p>
-<p>NGOs इन दवाओं को डोनर से कलेक्ट करते हैं, जाँचते हैं और सही मरीजों तक पहुँचाते हैं।</p>
-</div>
-
-<div class="section">
-<h2>बर्बाद न करें — दान करें</h2>
-<p>हम अक्सर मेडिकल स्टोर से दवाएँ खरीदते हैं, लेकिन कुछ ही गोलियाँ उपयोग करते हैं और बाकी बच जाती हैं।</p>
-<p>ये बची हुई दवाएँ कचरे में जाने के बजाय CureChain के माध्यम से किसी ज़रूरतमंद की जान बचा सकती हैं।</p>
-</div>
-
-</div>
-</div>
-
-</main>
-
-<footer>
-  <div class="footer-bottom">
-    <p>© 2026 CureChain. All Rights Reserved.</p>
-  </div>
-</footer>
+      </div>
+    </div>
 
 
 
+    <!-- ===================== HINDI CONTENT ===================== -->
+    <div id="hindi" style="display:none;">
+      <div class="container">
 
-<!-- LANGUAGE SWITCH SCRIPT -->
-<script>
-function showEnglish() {
-    document.getElementById("english").style.display = "block";
-    document.getElementById("hindi").style.display = "none";
-}
+        <h1 style="color:#00BFFF;font-weight:bold;">आसान दवा दान</h1>
+        <p>CureChain दवाओं के दान की प्रक्रिया को सरल, सुरक्षित और प्रभावी बनाता है। हर साल लाखों दवाएँ घरों में बिना
+          उपयोग के पड़ी-पड़ी एक्सपायर हो जाती हैं, जबकि दूसरी ओर कई लोग वही दवाएँ खरीदने में सक्षम नहीं होते। CureChain
+          इस अंतर को खत्म करता है ताकि आपकी बची हुई सुरक्षित दवाएँ ज़रूरतमंद तक पहुँच सकें।</p>
 
-function showHindi() {
-    document.getElementById("english").style.display = "none";
-    document.getElementById("hindi").style.display = "block";
-}
-</script>
+        <div class="section">
+          <h2>दवा दान क्यों महत्वपूर्ण है?</h2>
+          <p>दवाएँ महंगी होती हैं और हर किसी की पहुँच में नहीं होतीं। कई बार इलाज पूरा होने के बाद दवाएँ घर में बच जाती
+            हैं। ये अक्सर समय के साथ खराब होकर फेंक दी जाती हैं।</p>
+          <p>अगर इन्हें दान किया जाए तो ये किसी के लिए जीवनरक्षक साबित हो सकती हैं।</p>
+        </div>
+
+        <div class="section">
+          <h2>CureChain आपको कैसे मदद करता है?</h2>
+          <p>CureChain दान प्रक्रिया को बेहद आसान बनाता है। आपको केवल दवा का नाम, एक्सपायरी, मात्रा जैसी जानकारी डालनी
+            होती है।</p>
+          <p>इसके बाद CureChain और NGOs उसकी जाँच कर उसे उन लोगों तक पहुँचाते हैं जिन्हें उस दवा की जरूरत है।</p>
+        </div>
+
+        <div class="section">
+          <h2>आपको CureChain के माध्यम से ही दान क्यों करना चाहिए?</h2>
+          <ul>
+            <li><strong>दवा की बर्बादी रोकें</strong></li>
+            <li><strong>किसी की जान बचाएँ</strong></li>
+            <li><strong>सुरक्षित और विश्वसनीय प्रक्रिया</strong></li>
+            <li><strong>आपका छोटा दान बड़ा प्रभाव डाल सकता है</strong></li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h2>CureChain सुरक्षा कैसे सुनिश्चित करता है?</h2>
+          <p>हर दवा की एक्सपायरी, पैकिंग और सुरक्षा जाँची जाती है। एक्सपायर या खुली हुई दवाएँ कभी स्वीकार नहीं की जातीं।
+          </p>
+        </div>
+
+        <div class="section">
+          <h2>डोनर और NGO की भूमिका</h2>
+          <p>आम लोग अपनी घर में बची हुई सुरक्षित दवाएँ दान के लिए सूचीबद्ध करते हैं।</p>
+          <p>NGOs इन दवाओं को डोनर से कलेक्ट करते हैं, जाँचते हैं और सही मरीजों तक पहुँचाते हैं।</p>
+        </div>
+
+        <div class="section">
+          <h2>बर्बाद न करें — दान करें</h2>
+          <p>हम अक्सर मेडिकल स्टोर से दवाएँ खरीदते हैं, लेकिन कुछ ही गोलियाँ उपयोग करते हैं और बाकी बच जाती हैं।</p>
+          <p>ये बची हुई दवाएँ कचरे में जाने के बजाय CureChain के माध्यम से किसी ज़रूरतमंद की जान बचा सकती हैं।</p>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>© 2026 CureChain. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+
+
+
+  <!-- LANGUAGE SWITCH SCRIPT -->
+  <script>
+    function showEnglish() {
+      document.getElementById("english").style.display = "block";
+      document.getElementById("hindi").style.display = "none";
+    }
+
+    function showHindi() {
+      document.getElementById("english").style.display = "none";
+      document.getElementById("hindi").style.display = "block";
+    }
+  </script>
 
 </body>
+
 </html>
