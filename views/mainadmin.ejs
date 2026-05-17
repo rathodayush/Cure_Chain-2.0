@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CureChain · Admin Dashboard</title>
+    <style>
+        :root {
+            --primary: #8bd7f0;
+            --ink: #1f2937;
+            --border: #e5e7eb;
+            --soft: #f7fcff;
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, Segoe UI, Roboto;
+            color: var(--ink)
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px
+        }
+
+        /* Header */
+        .banner {
+            background: var(--primary);
+            padding: 12px 18px;
+            border-radius: 16px;
+            color: #064255;
+            margin-bottom: 16px
+        }
+
+        .banner h1 {
+            margin: 0;
+            font-size: 24px
+        }
+
+        /* Stats */
+        .strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px
+        }
+
+        .box {
+            background: var(--soft);
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px
+        }
+
+        .t {
+            font-size: 12px;
+            opacity: .7
+        }
+
+        .v {
+            font-weight: 700;
+            font-size: 22px;
+            margin-top: 4px
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 8px 18px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #064255
+        }
+
+        /* Cards & Table */
+        .card {
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 14px;
+            background: #fff;
+            margin-bottom: 12px
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .meta {
+            font-size: 13px;
+            opacity: .8
+        }
+
+        .btn {
+            border: 1px solid var(--primary);
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: #fff;
+            color: #064255;
+            cursor: pointer;
+            margin: 4px
+        }
+
+        .btn.primary {
+            background: var(--primary)
+        }
+
+        .table {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 12px
+        }
+
+        .thead,
+        .trow {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px
+        }
+
+        .thead {
+            background: #f7fcff;
+            font-size: 13px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .trow {
+            padding: 10px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .trow:last-child {
+            border-bottom: none
+        }
+
+        /* Popup */
+        #popup {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            align-items: center;
+            justify-content: center
+        }
+
+        #box {
+            background: #fff;
+            padding: 18px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            border: 1px solid var(--border)
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrap">
+        <!-- HEADER -->
+        <div class="banner"
+            style="background-color:#e5e7eb; display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px;">
+
+            <!-- 🔹 LEFT SIDE -->
+            <div>
+                <h1 style="margin-top: -10px;">
+                    <span style="color:#00BFFF; font-weight:600;">CureChain</span> · Admin Dashboard
+                </h1>
+
+                <p style="margin:4px 0 0 0;">
+                    Medicine Donation & Request Portal
+                </p>
+            </div>
+
+            <!-- 🔹 RIGHT SIDE -->
+            <div style="text-align:right;">
+                <p style="margin:0;">
+                    Welcome, <strong>
+                        <%= admin.name %>
+                    </strong> 👋
+                </p>
+
+                <!-- LOGOUT BUTTON -->
+                <form action="/logout" method="POST" style="margin-top:5px;">
+                    <button class="btn">Logout</button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Stats -->
+        <div class="strip">
+            <div class="box">
+                <div class="t">NGOs Pending</div>
+                <div class="v" id="st1">0</div>
+            </div>
+            <div class="box">
+                <div class="t">NGOs Active</div>
+                <div class="v" id="st2">0</div>
+            </div>
+            <div class="box">
+                <div class="t">Pending Donations</div>
+                <div class="v" id="st3">0</div>
+            </div>
+            <div class="box">
+                <div class="t">Completed Donations</div>
+                <div class="v" id="st4">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="ngos">NGO Management</button>
+            <button class="tab" data-tab="donors">Donor Management</button>
+            <button class="tab" data-tab="donations">All Donations</button>
+            <button class="tab" data-tab="request">All requests</button>
+            <button class="tab" data-tab="stock">Stock</button>
+            <button class="tab" data-tab="profile">Profile</button>
+
+
+        </div>
+
+        <div id="view"></div>
+
+        <!-- NGO MANAGEMENT -->
+
+        <div id="ngosSection" class="section">
+
+            <h2>All NGOs</h2>
+
+            <% ngos.forEach(n=> { %>
+
+                <div class="card">
+
+                    <p>
+                        <strong>
+                            <%= n.ngo_name %>
+                        </strong>
+                    </p>
+
+                    <p>
+                        NGO ID : <%= n.ngo_id %>
+                    </p>
+
+                    <p>
+                        Email : <%= n.email %>
+                    </p>
+
+                    <p>
+                        Registration No : <%= n.registration_number %>
+                    </p>
+
+                    <p>
+                        Contact Person : <%= n.contact_person %>
+                    </p>
+
+                    <p>
+                        Mobile : <%= n.phone %>
+                    </p>
+
+                    <p>
+                        Address : <%= n.address %>
+                    </p>
+
+
+
+                    <p>
+                        Status : <%= n.status %>
+                    </p>
+
+                    <% if(n.status !=='approved' ){ %>
+
+                        <a href="/approve-ngo/<%= n.ngo_id %>">
+
+                            <button class="btn primary">
+                                Approve NGO
+                            </button>
+
+                        </a>
+
+                        <% } %>
+
+                </div>
+
+                <% }) %>
+
+        </div>
+
+
+
+        <!-- DONOR MANAGEMENT -->
+
+        <div id="donorsSection" class="section" style="display:none;">
+
+            <h2>All Donors</h2>
+
+            <% donors.forEach(d=> { %>
+
+                <div class="card">
+
+                    <p>
+                        <strong>
+                            <%= d.name %>
+                        </strong>
+                    </p>
+
+                    <p>
+                        Donor ID : <%= d.donor_id %>
+                    </p>
+
+                    <p>
+                        Email : <%= d.email %>
+                    </p>
+
+                    <p>
+                        Mobile : <%= d.phone %>
+                    </p>
+
+                    <p>
+                        Address : <%= d.address %>
+                    </p>
+
+                    <p>
+                        Age : <%= d.age %>
+                    </p>
+
+                    <p>
+                        Status : <%= d.status %>
+                    </p>
+
+                    <% if(d.status !=='approved' ){ %>
+
+                        <a href="/approve-donor/<%= d.donor_id %>">
+
+                            <button class="btn primary">
+                                Approve Donor
+                            </button>
+
+                        </a>
+
+                        <% } %>
+
+                </div>
+
+                <% }) %>
+
+        </div>
+
+
+
+        <!-- ALL DONATIONS -->
+
+        <div id="donationsSection" class="section" style="display:none;">
+
+            <h2>Medicine Donations</h2>
+
+            <% medicines.forEach(m=> { %>
+
+                <div class="card">
+
+                    <img src="/uploads/<%= m.image %>" width="120" style="border-radius:10px;">
+
+                    <p>
+                        <strong>
+                            <%= m.medicine_name %>
+                        </strong>
+                    </p>
+
+                    <p>Type : <%= m.medicine_type %>
+                    </p>
+
+                    <p>Quantity : <%= m.quantity %>
+                    </p>
+
+                    <p>Expiry : <%= m.expiry_date %>
+                    </p>
+
+                    <p>Status : <%= m.status %>
+                    </p>
+
+                    <p>Donor Name : <%= m.name %>
+                    </p>
+
+                    <% if(m.status==='pending' ){ %>
+
+                        <a href="/approve-medicine/<%= m.id %>">
+
+                            <button class="btn primary">
+                                Approve
+                            </button>
+
+                        </a>
+
+                        <a href="/reject-medicine/<%= m.id %>">
+
+                            <button class="btn">
+                                Reject
+                            </button>
+
+                        </a>
+
+                        <% } %>
+
+                            <!-- <p>Donor Name : <%= m.name %>
+                            </p> -->
+
+                </div>
+
+                <% }) %>
+
+        </div>
+
+        <!-- ALL REQUESTS -->
+
+        <div id="requestSection" class="section" style="display:none;">
+
+            <h2>Medicine Requests</h2>
+
+            <% requests.forEach(r=> { %>
+
+                <div class="card">
+
+                    <h3>
+                        <%= r.medicine_name %>
+                    </h3>
+
+                    <p>
+                        Quantity : <%= r.quantity %>
+                    </p>
+
+                    <p>
+                        NGO : <%= r.ngo_name %>
+                    </p>
+
+                    <p>
+                        Donor : <%= r.donor_name %>
+                    </p>
+
+                    <p>
+                        Status : <%= r.status %>
+                    </p>
+
+                    <% if(r.status==='pending' ){ %>
+
+                        <a href="/approve-request/<%= r.id %>">
+
+                            <button class="btn primary">
+                                Approve Request
+                            </button>
+
+                        </a>
+
+                        <a href="/reject-request/<%= r.id %>">
+
+                            <button class="btn">
+                                Reject
+                            </button>
+
+                        </a>
+
+                        <% } %>
+
+                </div>
+
+                <% }) %>
+
+        </div>
+        <!-- PROFILE -->
+
+        <div id="profileSection" class="section" style="display:none;">
+
+            <h2>Admin Profile</h2>
+
+            <div class="card">
+
+                <p>
+                    <strong>Name :</strong>
+                    <%= admin.name %>
+                </p>
+
+                <p>
+                    <strong>Email :</strong>
+                    <%= admin.email %>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Popup -->
+        <div id="popup">
+            <div id="box">
+                <h3 style="margin:0 0 10px;color:#064255">Details</h3>
+                <div id="popupContent" style="font-size:14px;line-height:1.5"></div>
+                <button class="btn primary" style="width:100%;margin-top:10px" onclick="closePop()">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        window.history.forward();
+
+        function noBack() {
+            window.history.forward();
+        }
+
+        window.onpageshow = function (event) {
+            if (event.persisted) {
+                window.location.href = "/usersLogin";
+            }
+        };
+
+        window.onload = noBack;
+
+    </script>
+
+    <script>
+
+        const tabs = document.querySelectorAll(".tab");
+
+        tabs.forEach(tab => {
+
+            tab.addEventListener("click", () => {
+
+                document.querySelectorAll(".section").forEach(sec => {
+                    sec.style.display = "none";
+                });
+
+                tabs.forEach(t => {
+                    t.classList.remove("active");
+                });
+
+                tab.classList.add("active");
+
+                const name = tab.dataset.tab;
+
+                if (name === "ngos") {
+                    document.getElementById("ngosSection").style.display = "block";
+                }
+
+                if (name === "donors") {
+                    document.getElementById("donorsSection").style.display = "block";
+                }
+
+                if (name === "donations") {
+                    document.getElementById("donationsSection").style.display = "block";
+                }
+
+                if (name === "request") {
+                    document.getElementById("requestSection").style.display = "block";
+                }
+
+                if (name === "profile") {
+                    document.getElementById("profileSection").style.display = "block";
+                }
+
+            });
+
+        });
+
+    </script>
+</body>
+
+</html>

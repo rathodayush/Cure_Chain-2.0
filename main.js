@@ -18,6 +18,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
+const multer = require("multer");
+
 //session system
 
 const session = require('express-session');
@@ -27,10 +29,21 @@ app.use(session({
     secret: 'curechain_secret',
     resave: false,
     saveUninitialized: false,
+     rolling: true,
     cookie: {
-        maxAge: 1 * 60 * 1000   // ⏰ 5 minutes
+        maxAge: 60 * 60 * 1000   // ⏰ 5 minutes
     }
 }));
+
+app.use((req, res, next) => {
+
+    res.set('Cache-Control', 'no-store');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+
+    next();
+
+});
 
 // main routing
 app.get("/", (req, res) => {
@@ -45,6 +58,36 @@ const connection = mysql.createConnection({
     database: "curechain",
     password: "ayush123@"
 
+
+});
+
+const storage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/');
+    },
+
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+
+});
+
+const upload = multer({
+    storage: storage,
+
+    fileFilter: (req, file, cb) => {
+
+        if (
+            file.mimetype === "image/jpeg" ||
+            file.mimetype === "image/png"
+        ) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only JPG and PNG allowed"));
+        }
+
+    }
 
 });
 
@@ -72,7 +115,7 @@ app.post('/usersLogin', (req, res) => {
 
     const { type } = req.body;
 
-    // ================= DONOR REGISTER =================
+    //  DONOR REGISTER 
     if (type === 'donor') {
 
         const { name, email, password, phone, address, age } = req.body;
@@ -106,7 +149,7 @@ app.post('/usersLogin', (req, res) => {
         });
     }
 
-    // ================= NGO REGISTER =================
+    // NGO REGISTER 
     else if (type === 'ngo') {
 
         const { ngo_name, registration_number, email, password, contact_person, phone, address, description } = req.body;
@@ -265,7 +308,7 @@ app.post('/login', (req, res) => {
     );
 });
 
-app.get("/update-password", (req,res) => {
+app.get("/update-password", (req, res) => {
     res.render('updatepassword');
 });
 
@@ -291,6 +334,10 @@ app.post("/update-password", (req, res) => {
 
             // donor found
             if (donorResult.length > 0) {
+
+                if (donorResult[0].status !== 'approved') {
+                    return res.send("Admin approval pending ❌");
+                }
 
                 const donor = donorResult[0];
 
@@ -329,6 +376,10 @@ app.post("/update-password", (req, res) => {
 
                         // NGO found
                         if (ngoResult.length > 0) {
+
+                            if (ngoResult[0].status !== 'approved') {
+                                return res.send("Admin approval pending ❌");
+                            }
 
                             const ngo = ngoResult[0];
 
@@ -376,70 +427,262 @@ app.get('/donordass', (req, res) => {
         return res.redirect('/usersLogin');
     }
 
-    res.render('donordassboard', {
-        user: req.session.user
-    });
+    const donor_id = req.session.user.donor_id;
+
+    // donor medicines
+    connection.query(
+
+        "SELECT * FROM medicines WHERE donor_id=?",
+
+        [donor_id],
+
+        (err, medicines) => {
+
+            if (err) {
+                console.log(err);
+                return res.send("Database Error");
+            }
+
+            // NGO requests
+            connection.query(
+
+                `
+                SELECT requests.status,
+
+                medicines.medicine_name,
+                medicines.quantity,
+
+                ngos.ngo_name
+
+                FROM requests
+
+                JOIN medicines
+                ON requests.medicine_id = medicines.id
+
+                JOIN ngos
+                ON requests.ngo_id = ngos.ngo_id
+
+                WHERE medicines.donor_id=?
+                `,
+
+                [donor_id],
+
+                (err, requestedMedicines) => {
+
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    res.render('donordassboard', {
+
+                        user: req.session.user,
+                        medicines,
+                        requestedMedicines
+
+                    });
+
+                }
+
+            );
+
+        }
+
+    );
 
 });
+
+
+
+
 
 // ngo ke liye
 
+// app.get("/ngodassboard", (req, res) => {
+
+//     if (!req.session.user) {
+//         return res.redirect("/userlogin");
+//     }
+
+//     const user = req.session.user;
+
+//     // 🔴 yaha DB se data laana hai
+//     const counts = {
+//         new: 0,
+//         approved: 0,
+//         completed: 0,
+//         stock: 0
+//     };
+
+//     const requests = [];
+//     const approved = [];
+//     const completed = [];
+//     const stock = [];
+
+//     res.render("ngodassboard", {
+//         user,
+//         counts,
+//         requests,
+//         approved,
+//         completed,
+//         stock
+//     });
+
+// });
+
 app.get("/ngodassboard", (req, res) => {
 
-  if(!req.session.user){
-    return res.redirect("/userlogin");
-  }
+    if (!req.session.user) {
+        return res.redirect("/usersLogin");
+    }
 
-  const user = req.session.user;
+    const ngo_id = req.session.user.ngo_id;
 
-  // 🔴 yaha DB se data laana hai
-  const counts = {
-    new: 0,
-    approved: 0,
-    completed: 0,
-    stock: 0
-  };
+    // approved medicines
+    connection.query(
 
-  const requests = [];
-  const approved = [];
-  const completed = [];
-  const stock = [];
+        `
+SELECT medicines.*,
 
-  res.render("ngodassboard", {
-    user,
-    counts,
-    requests,
-    approved,
-    completed,
-    stock
-  });
+donors.name,
+
+requests.status
+
+FROM medicines
+
+LEFT JOIN donors
+ON medicines.donor_id = donors.donor_id
+
+LEFT JOIN requests
+ON medicines.id = requests.medicine_id
+AND requests.ngo_id='${ngo_id}'
+
+WHERE medicines.status='approved'
+
+AND
+(
+    requests.status IS NULL
+    OR
+    requests.status='pending'
+)
+`,
+
+        (err, requests) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            // approved requests
+            connection.query(
+
+                `
+                SELECT requests.*,
+
+                medicines.medicine_name,
+                medicines.quantity,
+
+                donors.name AS donor_name,
+                donors.phone,
+                donors.address
+
+                FROM requests
+
+                JOIN medicines
+                ON requests.medicine_id = medicines.id
+
+                JOIN donors
+                ON medicines.donor_id = donors.donor_id
+
+                WHERE requests.ngo_id=?
+                AND requests.status='approved'
+                `,
+
+                [ngo_id],
+
+                (err, approved) => {
+
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    res.render("ngodassboard", {
+
+                        user: req.session.user,
+
+                        counts: {
+                            new: requests.length,
+                            approved: approved.length,
+                            completed: 0,
+                            stock: 0
+                        },
+
+                        requests,
+                        approved,
+                        completed: [],
+                        stock: []
+
+                    });
+
+                }
+
+            );
+
+        }
+
+    );
 
 });
 
 
-app.get('/NGOPatnerships', (req,res) => {
+app.get('/NGOPatnerships', (req, res) => {
     res.render('work2');
 });
 
-app.get('/Safe&Verified', (req,res) => {
+app.get('/Safe&Verified', (req, res) => {
     res.render('work3');
 });
 
-app.get('/GlobalImpact', (req,res) => {
+app.get('/GlobalImpact', (req, res) => {
     res.render('work4');
 });
 
-app.get('/easydonation', (req,res) => {
+app.get('/easydonation', (req, res) => {
     res.render('work1');
 });
 
 // console.log(req.session);
 
+// app.post('/logout', (req, res) => {
+//     req.session.destroy(() => {
+//         res.redirect('/usersLogin');
+//     });
+// });
+
+// logout route
+
 app.post('/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/usersLogin');
-    });
+
+    // admin logout
+    if (req.session.admin) {
+
+        req.session.destroy(() => {
+            res.redirect('/adminlogin');
+        });
+
+    }
+
+    // donor / ngo logout
+    else {
+
+        req.session.destroy(() => {
+            res.redirect('/usersLogin');
+        });
+
+    }
+
 });
+
+
 
 app.post("/", (req, res) => {
     const { name, email, message } = req.body;
@@ -454,6 +697,428 @@ app.post("/", (req, res) => {
 
         res.redirect('/')
     });
+});
+
+app.get("/adminlogin", (req, res) => {
+
+    res.render("adminlogin");
+
+});
+
+app.post("/admin-login", (req, res) => {
+
+    const { email, password } = req.body;
+
+    connection.query(
+        "SELECT * FROM admins WHERE email=? AND password=?",
+        [email, password],
+
+        (err, result) => {
+
+            if (err) throw err;
+
+            if (result.length > 0) {
+
+                req.session.admin = result[0];
+
+                res.redirect("/admindass");
+
+            } else {
+                res.send("Invalid Login");
+            }
+
+        }
+    );
+
+});
+
+// app.get("/admindass", (req, res) => {
+
+//     if (!req.session.admin) {
+//         return res.redirect("/admin-login");
+//     }
+
+//     res.render('mainadmin', {
+//         admin: req.session.admin
+//     });
+
+// });
+
+app.get("/admindass", (req, res) => {
+
+    if (!req.session.admin) {
+        return res.redirect("/adminlogin");
+    }
+
+    // NGOs
+    connection.query(
+        "SELECT * FROM ngos",
+
+        (err, ngos) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            // Donors
+            connection.query(
+                "SELECT * FROM donors",
+
+                (err, donors) => {
+
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    // Medicines
+                    connection.query(
+
+                        `
+                        SELECT medicines.*, donors.name
+
+                        FROM medicines
+
+                        LEFT JOIN donors
+                        ON medicines.donor_id = donors.donor_id
+
+                        ORDER BY medicines.id DESC
+                        `,
+
+                        (err, medicines) => {
+
+                            if (err) {
+                                console.log(err);
+                            }
+
+                            // Requests
+                            connection.query(
+
+                                `
+                                SELECT requests.*,
+
+                                medicines.medicine_name,
+                                medicines.quantity,
+
+                                donors.name AS donor_name,
+
+                                ngos.ngo_name
+
+                                FROM requests
+
+                                JOIN medicines
+                                ON requests.medicine_id = medicines.id
+
+                                JOIN donors
+                                ON medicines.donor_id = donors.donor_id
+
+                                JOIN ngos
+                                ON requests.ngo_id = ngos.ngo_id
+                                `,
+
+                                (err, requests) => {
+
+                                    if (err) {
+                                        console.log(err);
+                                    }
+
+                                    res.render("mainadmin", {
+
+                                        admin: req.session.admin,
+                                        ngos,
+                                        donors,
+                                        medicines,
+                                        requests
+
+                                    });
+
+                                }
+
+                            );
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+        }
+
+    );
+
+});
+app.post(
+    "/donate",
+    upload.single("image"),
+    (req, res) => {
+
+        if (!req.session.user) {
+            return res.redirect("/usersLogin");
+        }
+
+        const {
+            med,
+            type,
+            qty,
+
+            exp,
+            desc
+        } = req.body;
+
+        const donor_id = req.session.user.donor_id;
+
+        // expiry validation
+
+        let today = new Date();
+
+        let expiry = new Date(exp);
+
+        // 🔥 current date + 5 months
+        let minExpiry = new Date();
+
+        minExpiry.setMonth(minExpiry.getMonth() + 5);
+
+        // ❌ validation
+        if (expiry <= minExpiry) {
+
+            return res.send(
+                "Medicine expiry must be at least 5 months ahead ❌"
+            );
+
+        }
+
+        // quantity validation
+
+        if (qty <= 0) {
+            return res.send("Invalid quantity ❌");
+        }
+
+        const image = req.file.filename;
+
+        const sql = `
+        INSERT INTO medicines
+        (
+            medicine_name,
+            medicine_type,
+            quantity,
+            
+            expiry_date,
+            description,
+            image,
+            donor_id,
+            status
+        )
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        connection.query(
+            sql,
+            [
+                med,
+                type,
+                qty,
+
+                exp,
+                desc,
+                image,
+                donor_id,
+                'pending'
+            ],
+
+            (err, result) => {
+
+                if (err) {
+                    console.log(err);
+                    return res.send("Medicine insert error");
+                }
+
+                res.redirect("/donordass");
+
+            }
+        );
+
+    }
+);
+
+app.get("/approve-donor/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE donors SET status='approved' WHERE donor_id=?",
+
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
+});
+
+app.get("/approve-ngo/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE ngos SET status='approved' WHERE ngo_id=?",
+
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
+});
+
+app.get("/approve-medicine/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE medicines SET status='approved' WHERE id=?",
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
+});
+
+
+app.get("/reject-medicine/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE medicines SET status='rejected' WHERE id=?",
+
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
+});
+
+app.get("/send-request/:id", (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/usersLogin");
+    }
+
+    const medicine_id = req.params.id;
+
+    const ngo_id = req.session.user.ngo_id;
+
+    connection.query(
+
+        `
+        INSERT INTO requests
+(medicine_id, ngo_id, status)
+
+        VALUES (?, ?, ?)
+        `,
+
+        [medicine_id, ngo_id, 'pending'],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/ngodassboard");
+
+        }
+
+    );
+
+});
+
+app.get("/approve-request/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE requests SET status='approved' WHERE id=?",
+
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
+});
+
+app.get("/reject-request/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    connection.query(
+
+        "UPDATE requests SET status='rejected' WHERE id=?",
+
+        [id],
+
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/admindass");
+
+        }
+
+    );
+
 });
 
 

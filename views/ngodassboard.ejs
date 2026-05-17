@@ -1,337 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CureChain · NGO Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CureChain · NGO Dashboard</title>
 
-<!--CSS SAME (NO CHANGE) -->
-<style>
-:root {
-  --primary: #8bd7f0;
-  --ink: #1f2937;
-  --border: #e5e7eb;
-  --soft: #f7fcff;
-  --radius: 14px;
-}
+  <!--CSS SAME (NO CHANGE) -->
+  <style>
+    :root {
+      --primary: #8bd7f0;
+      --ink: #1f2937;
+      --border: #e5e7eb;
+      --soft: #f7fcff;
+      --radius: 14px;
+    }
 
-* { box-sizing: border-box }
+    * {
+      box-sizing: border-box
+    }
 
-body {
-  margin: 0;
-  font-family: system-ui, Segoe UI, Roboto, Inter, Arial, sans-serif;
-  color: var(--ink);
-  background: #fff
-}
+    body {
+      margin: 0;
+      font-family: system-ui, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff
+    }
 
-.wrap { max-width: 980px; margin: 0 auto; padding: 16px }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px
+    }
 
-.banner {
-  background: var(--primary);
-  color: #064255;
-  padding: 10px 14px;
-  border-radius: 12px;
-}
+    .banner {
+      background: var(--primary);
+      color: #064255;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
 
-.banner h1 { margin: 0; font-size: 20px }
+    .banner h1 {
+      margin: 0;
+      font-size: 20px
+    }
 
-.strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin: 12px 0
-}
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0
+    }
 
-.box {
-  background: var(--soft);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px
-}
+    .box {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px
+    }
 
-.box .t { font-size: 12px; opacity: .8 }
-.box .v { font-weight: 700; font-size: 18px; margin-top: 4px }
+    .box .t {
+      font-size: 12px;
+      opacity: .8
+    }
 
-.tabs {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin: 8px 0 12px
-}
+    .box .v {
+      font-weight: 700;
+      font-size: 18px;
+      margin-top: 4px
+    }
 
-.tab {
-  border: 1px solid var(--border);
-  background: #fff;
-  border-radius: 999px;
-  padding: 7px 12px;
-  font-size: 14px;
-  cursor: pointer
-}
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0 12px
+    }
 
-.tab.active {
-  background: var(--primary);
-  border-color: var(--primary)
-}
+    .tab {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 14px;
+      cursor: pointer
+    }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-  margin-bottom: 8px;
-  background: #fff
-}
+    .tab.active {
+      background: var(--primary);
+      border-color: var(--primary)
+    }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap
-}
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #fff
+    }
 
-.meta { font-size: 13px; opacity: .85 }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap
+    }
 
-.btn {
-  margin: 4px;
-  border: 1px solid var(--primary);
-  background: #fff;
-  color: #05516a;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer
-}
+    .meta {
+      font-size: 13px;
+      opacity: .85
+    }
 
-.btn.primary {
-  background: var(--primary);
-  color: #064255
-}
+    .btn {
+      margin: 4px;
+      border: 1px solid var(--primary);
+      background: #fff;
+      color: #05516a;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer
+    }
 
-.table {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden
-}
+    .btn.primary {
+      background: var(--primary);
+      color: #064255
+    }
 
-.thead, .trow {
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
-  gap: 8px
-}
+    .table {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden
+    }
 
-.thead {
-  background: #f9fdff;
-  font-size: 12px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border)
-}
+    .thead,
+    .trow {
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr;
+      gap: 8px
+    }
 
-.trow {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border)
-}
+    .thead {
+      background: #f9fdff;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border)
+    }
 
-.trow:last-child { border-bottom: none }
+    .trow {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border)
+    }
 
-@media (max-width:720px) {
-  .strip { grid-template-columns: repeat(2, 1fr) }
-  .thead, .trow { grid-template-columns: 1.5fr .7fr 1.3fr }
-}
-</style>
+    .trow:last-child {
+      border-bottom: none
+    }
+
+    @media (max-width:720px) {
+      .strip {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .thead,
+      .trow {
+        grid-template-columns: 1.5fr .7fr 1.3fr
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-<!-- HEADER SAME -->
-<!-- HEADER -->
-<div class="banner" style="background-color:#e5e7eb; display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px;">
+    <!-- HEADER SAME -->
+    <!-- HEADER -->
+    <div class="banner"
+      style="background-color:#e5e7eb; display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px;">
 
-  <!-- LEFT -->
-  <div>
-    <h1 style="margin:0;">
-      <span style="color:#00BFFF; font-weight:600;">CureChain</span> · NGO Dashboard
-    </h1>
+      <!-- LEFT -->
+      <div>
+        <h1 style="margin:0;">
+          <span style="color:#00BFFF; font-weight:600;">CureChain</span> · NGO Dashboard
+        </h1>
 
-    <p style="margin:4px 0 0 0;">
-      Medicine Donation & Request Portal
-    </p>
-  </div>
+        <p style="margin:4px 0 0 0;">
+          Medicine Donation & Request Portal
+        </p>
+      </div>
 
-  <!-- RIGHT -->
-  <div style="text-align:right;">
-    <p style="margin:0;">
-      Welcome, <strong><%= user.ngo_name %></strong> 👋
-    </p>
+      <!-- RIGHT -->
+      <div style="text-align:right;">
+        <p style="margin:0;">
+          Welcome, <strong>
+            <%= user.ngo_name %>
+          </strong> 👋
+        </p>
 
-    <form action="/logout" method="POST" style="margin-top:5px;">
-      <button class="btn">Logout</button>
-    </form>
-  </div>
+        <form action="/logout" method="POST" style="margin-top:5px;">
+          <button class="btn">Logout</button>
+        </form>
+      </div>
 
-</div>
-
-
-<!-- STRIP (backend se aayega) -->
-<div class="strip">
-  <div class="box"><div class="t">New Requests</div><div class="v"><%= counts.new || 0 %></div></div>
-  <div class="box"><div class="t">Approved</div><div class="v"><%= counts.approved || 0 %></div></div>
-  <div class="box"><div class="t">Completed</div><div class="v"><%= counts.completed || 0 %></div></div>
-  <div class="box"><div class="t">Stock Items</div><div class="v"><%= counts.stock || 0 %></div></div>
-</div>
-
-
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="showTab('requests', this)">New Requests</button>
-  <button class="tab" onclick="showTab('approved', this)">Approved</button>
-  <button class="tab" onclick="showTab('completed', this)">Completed</button>
-  <button class="tab" onclick="showTab('stock', this)">Stock</button>
-  <button class="tab" onclick="showTab('profile', this)">Profile</button>
-</div>
-
-
-<!-- REQUESTS -->
-<div id="requests" class="card">
-  <h3>New Donation Requests</h3>
-
-  <% requests.forEach(r => { %>
-    <div class="card">
-      <strong><%= r.med %></strong> · <%= r.qty %>
-      <p>Expiry: <%= r.exp %></p>
-      <p>Donor: <%= r.donor_name %></p>
-
-      <button class="btn primary">Approve</button>
-      <button class="btn">Reject</button>
     </div>
-  <% }) %>
-
-</div>
 
 
-<!-- APPROVED -->
-<div id="approved" class="card" style="display:none;">
-  <h3>Approved</h3>
-
-  <% approved.forEach(a => { %>
-    <p><%= a.med %> - <%= a.qty %></p>
-  <% }) %>
-
-</div>
-
-
-<!-- COMPLETED -->
-<div id="completed" class="card" style="display:none;">
-  <h3>Completed</h3>
-
-  <% completed.forEach(c => { %>
-    <p><%= c.med %> - <%= c.qty %></p>
-  <% }) %>
-
-</div>
-
-
-<!-- STOCK -->
-<div id="stock" class="card" style="display:none;">
-  <h3>Stock</h3>
-
-  <% stock.forEach(s => { %>
-    <p><%= s.med %> - <%= s.total %></p>
-  <% }) %>
-
-</div>
+    <!-- STRIP (backend se aayega) -->
+    <div class="strip">
+      <div class="box">
+        <div class="t">New Requests</div>
+        <div class="v">
+          <%= counts.new || 0 %>
+        </div>
+      </div>
+      <div class="box">
+        <div class="t">Approved</div>
+        <div class="v">
+          <%= counts.approved || 0 %>
+        </div>
+      </div>
+      <div class="box">
+        <div class="t">Completed</div>
+        <div class="v">
+          <%= counts.completed || 0 %>
+        </div>
+      </div>
+      <div class="box">
+        <div class="t">Stock Items</div>
+        <div class="v">
+          <%= counts.stock || 0 %>
+        </div>
+      </div>
+    </div>
 
 
-<!-- 🔥 PROFILE (NEW ADD) -->
-<div id="profile" class="card" style="display:none;">
-  <h3>NGO Profile</h3>
-
-  <p><strong>NGO Name:</strong> <%= user.ngo_name %></p>
-  <p><strong>Registration No:</strong> <%= user.registration_number %></p>
-  <p><strong>Email:</strong> <%= user.email %></p>
-  <p><strong>Phone:</strong> <%= user.phone %></p>
-  <p><strong>Address:</strong> <%= user.address %></p>
-</div>
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('requests', this)">New Requests</button>
+      <button class="tab" onclick="showTab('approved', this)">Approved</button>
+      <button class="tab" onclick="showTab('completed', this)">Completed</button>
+      <button class="tab" onclick="showTab('stock', this)">Stock</button>
+      <button class="tab" onclick="showTab('profile', this)">Profile</button>
+    </div>
 
 
-<script>
+    <!-- REQUESTS -->
+    <div id="requests" class="card">
+      <h3>New Donation Requests</h3>
+
+      <% requests.forEach(r=> { %>
+
+        <div class="card">
+
+          <strong>
+            <%= r.medicine_name %>
+          </strong>
+
+          <p>
+            Quantity : <%= r.quantity %>
+          </p>
+
+          <p>
+            Expiry : <%= r.expiry_date %>
+          </p>
+
+          <p>
+            Donor : <%= r.name %>
+          </p>
+
+          <% if(r.status==='pending' ){ %>
+
+            <button class="btn">
+              Pending Approval
+            </button>
+
+            <% } else if(r.status==='approved' ){ %>
+
+              <button class="btn primary">
+                Approved
+              </button>
+
+              <% } else { %>
+
+                <a href="/send-request/<%= r.id %>">
+
+                  <button class="btn primary">
+                    Request Medicine
+                  </button>
+
+                </a>
+
+                <% } %>
+
+        </div>
+
+        <% }) %>
+
+    </div>
+
+
+    <!-- APPROVED -->
+    <div id="approved" class="card" style="display:none;">
+
+      <h3>Approved Medicines</h3>
+
+      <% approved.forEach(a=> { %>
+
+        <div class="card">
+
+          <h3>
+            <%= a.medicine_name %>
+          </h3>
+
+          <p>
+            Quantity : <%= a.quantity %>
+          </p>
+
+          <p>
+            Donor Name : <%= a.donor_name %>
+          </p>
+
+          <p>
+            Phone : <%= a.phone %>
+          </p>
+
+          <p>
+            Address : <%= a.address %>
+          </p>
+
+        </div>
+
+        <% }) %>
+
+    </div>
+
+
+    <!-- COMPLETED -->
+    <div id="completed" class="card" style="display:none;">
+      <h3>Completed</h3>
+
+      <% completed.forEach(c=> { %>
+        <p>
+          <%= c.med %> - <%= c.qty %>
+        </p>
+        <% }) %>
+
+    </div>
+
+
+    <!-- STOCK -->
+    <div id="stock" class="card" style="display:none;">
+      <h3>Stock</h3>
+
+      <% stock.forEach(s=> { %>
+        <p>
+          <%= s.med %> - <%= s.total %>
+        </p>
+        <% }) %>
+
+    </div>
+
+
+    <!-- 🔥 PROFILE (NEW ADD) -->
+    <div id="profile" class="card" style="display:none;">
+      <h3>NGO Profile</h3>
+
+      <p><strong>NGO Name:</strong>
+        <%= user.ngo_name %>
+      </p>
+      <p><strong>Registration No:</strong>
+        <%= user.registration_number %>
+      </p>
+      <p><strong>Email:</strong>
+        <%= user.email %>
+      </p>
+      <p><strong>Phone:</strong>
+        <%= user.phone %>
+      </p>
+      <p><strong>Address:</strong>
+        <%= user.address %>
+      </p>
+    </div>
+
+
+    <script>
+
 function showTab(tabId, btn){
-  document.querySelectorAll('.card').forEach(sec=>{
-    sec.style.display = "none";
-  });
 
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.classList.remove('active');
-  });
+    // hide all sections
+    document.getElementById('requests').style.display = "none";
+    document.getElementById('approved').style.display = "none";
+    document.getElementById('completed').style.display = "none";
+    document.getElementById('stock').style.display = "none";
+    document.getElementById('profile').style.display = "none";
 
-  document.getElementById(tabId).style.display = "block";
-  btn.classList.add('active');
+    // remove active
+    document.querySelectorAll('.tab').forEach(t=>{
+        t.classList.remove('active');
+    });
+
+    // show selected
+    document.getElementById(tabId).style.display = "block";
+
+    // active add
+    btn.classList.add('active');
 }
+
 </script>
 
+    <script>
+      const $ = s => document.querySelector(s);
+      const $$ = s => [...document.querySelectorAll(s)];
 
+      // function renderRequests() {
+      //   $('#view').innerHTML = `
+      //     <div class="card">
+      //       <div class="row">
+      //         <div>
+      //           <div><strong><!-- med name --></strong> · <span class="meta">× <!-- qty --></span></div>
+      //           <div class="meta">Expiry: <!-- expiry --></div>
+      //           <div class="meta">Donor: <!-- donor name --></div>
+      //         </div>
+      //         <div class="meta">#ID</div>
+      //       </div>
+      //     </div>
 
-<script>
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+      //     <div class="card" style="margin-top:-6px; border-top:0; border-top-left-radius:0; border-top-right-radius:0">
+      //       <button class="btn primary">Approve</button>
+      //       <button class="btn">Reject</button>
+      //     </div>
+      //   `;
+      // }
 
-// function renderRequests() {
-//   $('#view').innerHTML = `
-//     <div class="card">
-//       <div class="row">
-//         <div>
-//           <div><strong><!-- med name --></strong> · <span class="meta">× <!-- qty --></span></div>
-//           <div class="meta">Expiry: <!-- expiry --></div>
-//           <div class="meta">Donor: <!-- donor name --></div>
-//         </div>
-//         <div class="meta">#ID</div>
-//       </div>
-//     </div>
+      function renderApproved() {
+        $('#view').innerHTML = `<div class="card">No data</div>`;
+      }
 
-//     <div class="card" style="margin-top:-6px; border-top:0; border-top-left-radius:0; border-top-right-radius:0">
-//       <button class="btn primary">Approve</button>
-//       <button class="btn">Reject</button>
-//     </div>
-//   `;
-// }
+      function renderCompleted() {
+        $('#view').innerHTML = `<div class="card">No data</div>`;
+      }
 
-function renderApproved() {
-  $('#view').innerHTML = `<div class="card">No data</div>`;
-}
+      // function renderStock() {
+      //   $('#view').innerHTML = `
+      //     <div class="table">
+      //       <div class="thead">
+      //         <div>Medicine</div><div>Total</div><div>Batches</div>
+      //       </div>
+      //       <div class="trow">
+      //         <div><strong><!-- med --></strong></div>
+      //         <div><!-- total --></div>
+      //         <div><!-- batch --></div>
+      //       </div>
+      //     </div>
+      //   `;
+      // }
 
-function renderCompleted() {
-  $('#view').innerHTML = `<div class="card">No data</div>`;
-}
+      // /* tabs */
+      // $$('.tab').forEach(tab => {
+      //   tab.onclick = () => {
+      //     $$('.tab').forEach(t => t.classList.remove('active'));
+      //     tab.classList.add('active');
 
-// function renderStock() {
-//   $('#view').innerHTML = `
-//     <div class="table">
-//       <div class="thead">
-//         <div>Medicine</div><div>Total</div><div>Batches</div>
-//       </div>
-//       <div class="trow">
-//         <div><strong><!-- med --></strong></div>
-//         <div><!-- total --></div>
-//         <div><!-- batch --></div>
-//       </div>
-//     </div>
-//   `;
-// }
+      //     if (tab.dataset.tab === 'requests') renderRequests();
+      //     else if (tab.dataset.tab === 'approved') renderApproved();
+      //     else if (tab.dataset.tab === 'completed') renderCompleted();
+      //     else renderStock();
+      //   };
+      // });
 
-// /* tabs */
-// $$('.tab').forEach(tab => {
-//   tab.onclick = () => {
-//     $$('.tab').forEach(t => t.classList.remove('active'));
-//     tab.classList.add('active');
+      // /* default */
+      // renderRequests();
+    </script>
 
-//     if (tab.dataset.tab === 'requests') renderRequests();
-//     else if (tab.dataset.tab === 'approved') renderApproved();
-//     else if (tab.dataset.tab === 'completed') renderCompleted();
-//     else renderStock();
-//   };
-// });
+    <script>
 
-// /* default */
-// renderRequests();
-</script>
+      window.history.forward();
+
+      function noBack() {
+        window.history.forward();
+      }
+
+      window.onpageshow = function (event) {
+        if (event.persisted) {
+          window.location.href = "/usersLogin";
+        }
+      };
+
+      window.onload = noBack;
+
+    </script>
 
 </body>
+
 </html>

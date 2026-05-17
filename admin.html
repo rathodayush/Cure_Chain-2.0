@@ -45,11 +45,37 @@
 <body>
 <div class="wrap">
 
-  <!-- Header -->
-  <div class="banner">
-    <h1>Admin Dashboard</h1>
-    <div>Manage NGOs · Donors · Donations · Stock</div>
-  </div>
+  
+    <!-- HEADER -->
+    <div class="banner"
+      style="background-color:#e5e7eb; display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px;">
+
+      <!-- 🔹 LEFT SIDE -->
+      <div>
+        <h1 style="margin-top: -10px;">
+          <span style="color:#00BFFF; font-weight:600;">CureChain</span> · Admin Dashboard
+        </h1>
+
+        <p style="margin:4px 0 0 0;">
+          Medicine Donation & Request Portal
+        </p>
+      </div>
+
+      <!-- 🔹 RIGHT SIDE -->
+      <div style="text-align:right;">
+        <p style="margin:0;">
+          Welcome, <strong>
+            <%= admin.name %>
+          </strong> 👋
+        </p>
+
+        <!-- LOGOUT BUTTON -->
+        <form action="/logout" method="POST" style="margin-top:5px;">
+          <button class="btn">Logout</button>
+        </form>
+      </div>
+
+    </div>
 
   <!-- Stats -->
   <div class="strip">
@@ -65,6 +91,9 @@
     <button class="tab" data-tab="donors">Donor Management</button>
     <button class="tab" data-tab="donations">All Donations</button>
     <button class="tab" data-tab="stock">Stock</button>
+    <button class="tab" data-tab="profile">Profile</button>
+
+    
   </div>
 
   <div id="view"></div>
