@@ -132,6 +132,8 @@ function render(){
   if(state.active==='donors') showDonors();
   if(state.active==='donations') showDonations();
   if(state.active==='stock') showStock();
+
+  if(state.active==='profile') showProfile();
 }
 
 function showNGO(){
@@ -174,6 +176,30 @@ function showStock(){
     out+=`</div>`;
   });
   $('#view').innerHTML = out;
+}
+
+function showProfile(){
+
+  $('#view').innerHTML = `
+
+    <div class="card" style="text-align:center;">
+
+      <img src="/images/admin.png"
+           width="120"
+           height="120"
+           style="border-radius:50%; margin-bottom:15px;">
+
+      <h2><%= admin.name %></h2>
+
+      <p><strong>Email :</strong> <%= admin.email %></p>
+
+      <p><strong>Mobile :</strong> <%= admin.mobile %></p>
+
+      <p><strong>Role :</strong> Super Admin</p>
+
+    </div>
+
+  `;
 }
 
 function pop(html){ $('#popupContent').innerHTML=html; $('#popup').style.display='flex'; }

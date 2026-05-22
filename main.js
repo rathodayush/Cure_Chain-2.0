@@ -20,8 +20,9 @@ app.use('/uploads', express.static('uploads'));
 
 const multer = require("multer");
 
-//session system
 
+
+//session system
 const session = require('express-session');
 const { render } = require("ejs");
 
@@ -47,18 +48,37 @@ app.use((req, res, next) => {
 
 // main routing
 app.get("/", (req, res) => {
-    res.render("index");
-    // res.send("ok goodg");
+    // If user is already logged in, redirect to their dashboard
+    if (req.session.user) {
+        if (req.session.type === 'donor') {
+            return res.redirect('/donordass');
+        } else if (req.session.type === 'ngo') {
+            return res.redirect('/ngodassboard');
+        }
+    }
+    // If admin is logged in, redirect to admin dashboard
+    if (req.session.admin) {
+        return res.redirect('/admindass');
+    }
+    res.render("index", {
+        user: null,
+        userType: null
+    });
 });
 
 const connection = mysql.createConnection({
-
     host: "localhost",
     user: "root",
     database: "curechain",
     password: "ayush123@"
+});
 
-
+// Run database migrations for new columns safely
+connection.query("ALTER TABLE donors ADD COLUMN document VARCHAR(255) DEFAULT NULL", (err) => {
+    if (err && err.code !== 'ER_DUP_FIELDNAME') console.log("DB setup: ", err.message);
+});
+connection.query("ALTER TABLE ngos ADD COLUMN document VARCHAR(255) DEFAULT NULL", (err) => {
+    if (err && err.code !== 'ER_DUP_FIELDNAME') console.log("DB setup: ", err.message);
 });
 
 const storage = multer.diskStorage({
@@ -80,11 +100,12 @@ const upload = multer({
 
         if (
             file.mimetype === "image/jpeg" ||
-            file.mimetype === "image/png"
+            file.mimetype === "image/png" ||
+            file.mimetype === "application/pdf"
         ) {
             cb(null, true);
         } else {
-            cb(new Error("Only JPG and PNG allowed"));
+            cb(new Error("Only JPG, PNG, and PDF allowed"));
         }
 
     }
@@ -96,8 +117,14 @@ const upload = multer({
 // connection.end();ll
 
 app.get("/usersLogin", (req, res) => {
+    if (req.session.user) {
+        if (req.session.type === 'donor') {
+            return res.redirect('/donordass');
+        } else if (req.session.type === 'ngo') {
+            return res.redirect('/ngodassboard');
+        }
+    }
     res.render("mainlogin");
-
 });
 // app.post("/usersLogin", (req, res) => {
 //   let { email, password } = req.body;
@@ -111,14 +138,19 @@ app.get("/usersLogin", (req, res) => {
 
 let port = 4040;
 
-app.post('/usersLogin', (req, res) => {
+app.post('/usersLogin', upload.single('document'), (req, res) => {
 
     const { type } = req.body;
+    const document = req.file ? req.file.filename : null;
 
     //  DONOR REGISTER 
     if (type === 'donor') {
 
         const { name, email, password, phone, address, age } = req.body;
+
+        if (!email.endsWith('.com')) {
+            return res.redirect('/usersLogin?error=' + encodeURIComponent("Invalid email. Only .com domains are allowed! ❌"));
+        }
 
         // donor_id generate
         connection.query("SELECT donor_id FROM donors ORDER BY id DESC LIMIT 1", (err, result) => {
@@ -133,17 +165,17 @@ app.post('/usersLogin', (req, res) => {
 
             const sql = `
                 INSERT INTO donors 
-                (donor_id, name, email, password, phone, address, age) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (donor_id, name, email, password, phone, address, age, document, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
             `;
 
-            connection.query(sql, [newId, name, email, password, phone, address, age], (err, result) => {
+            connection.query(sql, [newId, name, email, password, phone, address, age, document], (err, result) => {
                 if (err) {
                     console.log(err);
-                    return res.send("Error in donor insert");
+                    return res.redirect('/usersLogin?error=' + encodeURIComponent("Error registering donor. Email might already be in use! ❌"));
                 }
 
-                res.redirect('/usersLogin');
+                res.redirect('/usersLogin?registeredEmail=' + encodeURIComponent(email));
             });
 
         });
@@ -153,6 +185,10 @@ app.post('/usersLogin', (req, res) => {
     else if (type === 'ngo') {
 
         const { ngo_name, registration_number, email, password, contact_person, phone, address, description } = req.body;
+
+        if (!email.endsWith('.com')) {
+            return res.redirect('/usersLogin?error=' + encodeURIComponent("Invalid email. Only .com domains are allowed! ❌"));
+        }
 
         connection.query("SELECT ngo_id FROM ngos ORDER BY id DESC LIMIT 1", (err, result) => {
 
@@ -166,17 +202,17 @@ app.post('/usersLogin', (req, res) => {
 
             const sql = `
                 INSERT INTO ngos 
-                (ngo_id, ngo_name, registration_number, email, password, contact_person, phone, address, description) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (ngo_id, ngo_name, registration_number, email, password, contact_person, phone, address, description, document, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
             `;
 
-            connection.query(sql, [newId, ngo_name, registration_number, email, password, contact_person, phone, address, description], (err, result) => {
+            connection.query(sql, [newId, ngo_name, registration_number, email, password, contact_person, phone, address, description, document], (err, result) => {
                 if (err) {
                     console.log(err);
-                    return res.send("Error in NGO insert");
+                    return res.redirect('/usersLogin?error=' + encodeURIComponent("Error registering NGO. Email or registration number might already be in use! ❌"));
                 }
 
-                res.redirect('/usersLogin');
+                res.redirect('/usersLogin?registeredEmail=' + encodeURIComponent(email));
             });
 
         });
@@ -268,10 +304,13 @@ app.post('/login', (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send("DB Error");
+                return res.redirect('/usersLogin?error=' + encodeURIComponent("Database Error ❌"));
             }
 
             if (donorResult.length > 0) {
+                if (donorResult[0].status !== 'approved') {
+                    return res.redirect('/usersLogin?error=' + encodeURIComponent("Admin approval pending. Please wait until your account is verified. ⏳"));
+                }
 
                 // ✅ donor login
                 req.session.user = donorResult[0];
@@ -288,10 +327,13 @@ app.post('/login', (req, res) => {
 
                     if (err) {
                         console.log(err);
-                        return res.send("DB Error");
+                        return res.redirect('/usersLogin?error=' + encodeURIComponent("Database Error ❌"));
                     }
 
                     if (ngoResult.length > 0) {
+                        if (ngoResult[0].status !== 'approved') {
+                            return res.redirect('/usersLogin?error=' + encodeURIComponent("Admin approval pending. Please wait until your account is verified. ⏳"));
+                        }
 
                         // ✅ NGO login
                         req.session.user = ngoResult[0];
@@ -301,7 +343,7 @@ app.post('/login', (req, res) => {
                     }
 
                     // ❌ dono me nahi mila
-                    res.send("Invalid Email or Password ❌");
+                    return res.redirect('/usersLogin?error=' + encodeURIComponent("Invalid Email or Password ❌"));
                 }
             );
         }
@@ -700,9 +742,10 @@ app.post("/", (req, res) => {
 });
 
 app.get("/adminlogin", (req, res) => {
-
+    if (req.session.admin) {
+        return res.redirect('/admindass');
+    }
     res.render("adminlogin");
-
 });
 
 app.post("/admin-login", (req, res) => {
@@ -715,7 +758,10 @@ app.post("/admin-login", (req, res) => {
 
         (err, result) => {
 
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+                return res.redirect('/adminlogin?error=' + encodeURIComponent("Database Error ❌"));
+            }
 
             if (result.length > 0) {
 
@@ -724,7 +770,7 @@ app.post("/admin-login", (req, res) => {
                 res.redirect("/admindass");
 
             } else {
-                res.send("Invalid Login");
+                res.redirect('/adminlogin?error=' + encodeURIComponent("Invalid Email or Password ❌"));
             }
 
         }
@@ -990,6 +1036,22 @@ app.get("/approve-ngo/:id", (req, res) => {
 
 });
 
+app.get("/reject-donor/:id", (req, res) => {
+    const id = req.params.id;
+    connection.query("UPDATE donors SET status='rejected' WHERE donor_id=?", [id], (err, result) => {
+        if (err) console.log(err);
+        res.redirect("/admindass");
+    });
+});
+
+app.get("/reject-ngo/:id", (req, res) => {
+    const id = req.params.id;
+    connection.query("UPDATE ngos SET status='rejected' WHERE ngo_id=?", [id], (err, result) => {
+        if (err) console.log(err);
+        res.redirect("/admindass");
+    });
+});
+
 app.get("/approve-medicine/:id", (req, res) => {
 
     const id = req.params.id;
@@ -1129,3 +1191,4 @@ app.listen(port, () => {
 });
 
 // ayush123
+

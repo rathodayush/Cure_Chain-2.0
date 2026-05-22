@@ -55,14 +55,24 @@
                 <a class="nav-link" href="usersLogin"><i class="fa-solid fa-bars"
                     style="padding-right: 1rem; font-size: 1rem;"></i>Dashboard</a>
               </li>
+              <% if (!locals.user) { %>
               <li class="nav-item">
-
                 <a class="nav-link" href="adminlogin"><i class="fa-solid fa-user-shield"
                     style="padding-right: 1.3rem; font-size: 1rem;"></i>Admin</a>
               </li>
+              <% } %>
 
 
+              <% if (!locals.user) { %>
               <li> <a href="usersLogin"><button class="btn btn-primary">join as a</button></a></li>
+              <% } else { %>
+              <li> <a href="<%= locals.userType === 'donor' ? '/donordass' : '/ngodassboard' %>"><button class="btn btn-success">Dashboard</button></a></li>
+              <li>
+                <form action="/logout" method="POST" style="margin:0;">
+                  <button class="btn btn-outline-danger ms-2" type="submit">Logout</button>
+                </form>
+              </li>
+              <% } %>
 
             </ul>
           </div>

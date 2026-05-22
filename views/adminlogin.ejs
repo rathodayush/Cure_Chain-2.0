@@ -151,6 +151,15 @@
 
     </div>
 
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMsg = urlParams.get('error');
+            if (errorMsg) {
+                alert(errorMsg);
+            }
+        });
+    </script>
 </body>
 
 </html>

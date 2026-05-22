@@ -175,19 +175,19 @@
     <div class="strip">
       <div class="box">
         <div class="t">Total Donations</div>
-        <div class="v">0</div>
+        <div class="v"><%= medicines.length %></div>
       </div>
       <div class="box">
         <div class="t">Pending</div>
-        <div class="v">0</div>
+        <div class="v"><%= medicines.filter(m => m.status === 'pending').length %></div>
       </div>
       <div class="box">
         <div class="t">Approved</div>
-        <div class="v">0</div>
+        <div class="v"><%= medicines.filter(m => m.status === 'approved').length %></div>
       </div>
       <div class="box">
-        <div class="t">Completed</div>
-        <div class="v">0</div>
+        <div class="t">Requested</div>
+        <div class="v"><%= requestedMedicines.length %></div>
       </div>
     </div>
 
@@ -330,27 +330,37 @@ function showTab(tabId, btn) {
 
     // active button
     btn.classList.add('active');
+};
+
+function validateForm() {
+
+    const email = document.getElementById("email").value;
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    if (!emailPattern.test(email)) {
+        alert("Please enter a valid email");
+        return false;
+    }
+
+    return true;
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error');
+    const successMsg = urlParams.get('success');
+    if (errorMsg) {
+        alert(errorMsg);
+    }
+    if (successMsg) {
+        alert(successMsg);
+    }
+});
 
 </script>
 
-  <script>
 
-    window.history.forward();
-
-    function noBack() {
-      window.history.forward();
-    }
-
-    window.onpageshow = function (event) {
-      if (event.persisted) {
-        window.location.href = "/usersLogin";
-      }
-    };
-
-    window.onload = noBack;
-
-  </script>
 
 </body>
 

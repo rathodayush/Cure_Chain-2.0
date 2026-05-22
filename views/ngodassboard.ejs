@@ -404,6 +404,7 @@ function showTab(tabId, btn){
     btn.classList.add('active');
 }
 
+
 </script>
 
     <script>
@@ -470,23 +471,7 @@ function showTab(tabId, btn){
       // renderRequests();
     </script>
 
-    <script>
 
-      window.history.forward();
-
-      function noBack() {
-        window.history.forward();
-      }
-
-      window.onpageshow = function (event) {
-        if (event.persisted) {
-          window.location.href = "/usersLogin";
-        }
-      };
-
-      window.onload = noBack;
-
-    </script>
 
 </body>
 
