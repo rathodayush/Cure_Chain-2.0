@@ -929,7 +929,7 @@ app.post(
         if (expiry <= minExpiry) {
 
             return res.send(
-                "Medicine expiry must be at least 5 months ahead ❌"
+                "<script>alert('Medicine expiry must be at least 5 months ahead ❌'); window.location.href='/donordass';</script>"
             );
 
         }
@@ -937,7 +937,7 @@ app.post(
         // quantity validation
 
         if (qty <= 0) {
-            return res.send("Invalid quantity ❌");
+            return res.send("<script>alert('Invalid quantity ❌'); window.location.href='/donordass';</script>");
         }
 
         const image = req.file.filename;
